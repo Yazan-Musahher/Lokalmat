@@ -15,7 +15,6 @@ public class ApplicationDbInitializer
         }
 
         // Add standard users with specified user types
-        // Note: Admin user does not pass a UserType, as it's not relevant for role-based access control
         await CreateUser(userManager, "admin@uia.no", "Admin", "Adminson", "Address1", "1234567890", "Password1.", null, "Admin");
         await CreateUser(userManager, "privat@lokalmat.no", "privat", "privatLastName", "Address2", "1234567891", "Password1.", UserType.PrivateUser);
         await CreateUser(userManager, "produsent@lokalmat.no", "produsent", "produsentLastName", "Address3", "1234567892", "Password1.", UserType.Manufacturer);
@@ -40,7 +39,7 @@ public class ApplicationDbInitializer
                 EmailConfirmed = true
             };
 
-            // Set the UserType only if provided (and likely not for admin users)
+            
             if (userType.HasValue)
             {
                 user.UserType = userType.Value;
