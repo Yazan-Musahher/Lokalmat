@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Administration.Application\Administration.Application.csproj" />
+    <ProjectReference Include="..\Administration.Contracts\Administration.Contracts.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+   <PackageReference Include="Mapster" />
+   <PackageReference Include="Mapster.DependencyInjection" />
+   <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+   <PackageReference Include="Microsoft.AspNetCore.Mvc" />
+   <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+ </ItemGroup>
+
+</Project>

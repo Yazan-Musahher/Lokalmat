@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransportHub.Domain\TransportHub.Domain.csproj" />
+    <ProjectReference Include="..\TransportHub.IntegrationEvents\TransportHub.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\Sales\Sales.IntegrationEvents\Sales.IntegrationEvents.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+   <PackageReference Include="FluentValidation" />
+   <PackageReference Include="FluentValidation.AspNetCore" />
+   <PackageReference Include="MediatR" />
+   <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
+   <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+</Project>

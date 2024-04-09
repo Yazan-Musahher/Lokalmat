@@ -1,0 +1,30 @@
+.image-placeholder {
+    border: 2px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 90%;
+    position: relative;
+    width: 90%;
+}
+
+.image-placeholder svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.image-container {
+    width: 90%;
+    min-width: 150px;
+    max-width: 400px;
+    min-height: 150px;
+    max-height: 700px;
+}
+
+
+.btn-add-picture {
+    border-radius: 20px !important;
+}

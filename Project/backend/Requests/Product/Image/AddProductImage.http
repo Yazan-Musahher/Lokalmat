@@ -1,0 +1,14 @@
+@host=http://localhost:5018
+@productId=64010e3c-766a-45a5-948f-e8d14735ed8c
+
+### Add product image
+POST {{host}}/product/{{productId}}/AddImage
+Content-Type: application/json
+
+{
+    "url": "add image url here",
+    "alt": "An image of freshly squeezed Apple juice.",
+    "title": "Apple Juice",
+    "contentType": "jpg"
+}
+

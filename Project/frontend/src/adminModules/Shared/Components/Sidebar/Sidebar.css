@@ -1,0 +1,61 @@
+.sidebar {
+    background-color: var(--secondary-color); /* Dark green background */
+    color: white;
+    width: 120px; /* Width when sidebar is open */
+    height: 100vh;
+    padding: 20px;
+    position: fixed;
+    top: 10vh;
+    left: 0;
+    transition: width 0.3s ease;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    z-index: 100;
+
+}
+
+
+/* Style for each navigation item */
+.sidebar-item {
+    text-decoration: none;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: color 0.3s ease;
+    color: white;
+}
+
+.sidebar-item:hover {
+    color: var(--primary-color); /* Light green text on hover */
+}
+
+/* Style for the icon in the sidebar item */
+.sidebar-icon {
+    margin-bottom: 5px; /* Space between icon and text */
+}
+
+/* Closed state of the sidebar */
+.sidebar.closed {
+    width: 0; /* Hide sidebar content when closed */
+    padding: 0; /* Remove padding when closed */
+}
+
+.active-link {
+    border-left: 4px solid white;
+    padding-left: 8px; /* Adjust as necessary */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0; /* Start with sidebar closed on smaller screens */
+        padding: 0;
+    }
+
+    .sidebar.open {
+        width: 150px; /* Width of sidebar when opened on smaller screens */
+        padding: 20px; /* Restore padding when open */
+
+    }
+}

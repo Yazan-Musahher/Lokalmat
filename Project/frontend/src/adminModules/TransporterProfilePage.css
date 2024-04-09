@@ -1,0 +1,21 @@
+.status-badge {
+    display: inline-block;
+    padding: .45em .6em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .45rem;
+}
+
+.status-active {
+    color: white;
+    background-color: green;
+}
+
+.status-inactive {
+    color: white;
+    background-color: red;
+}

@@ -1,0 +1,42 @@
+/* Add space between buttons */
+
+.tab-custom.active {
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+.tab-custom.inactive {
+    color: #b0b0b0;
+    background-color: transparent;
+}
+
+
+
+.btn-custom-submit-order {
+    margin-right: 1rem;
+    width: 15vw;
+    min-width: 150px;
+    max-width: 300px;
+    height: 3rem;
+}
+
+
+.btn-custom-cancel-order {
+    padding: 0.5rem 2rem;
+    height: 3rem;
+    min-width: 100px;
+    max-width: 220px;
+}
+
+.btn-no-border {
+    border: none !important;
+    box-shadow: none;
+    color: var(--secondary-color) !important;
+}
+
+
+
+
+
+
+

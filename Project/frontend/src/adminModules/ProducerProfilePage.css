@@ -1,0 +1,16 @@
+.btn-custom-submit-producer {
+    margin-right: 1rem;
+    width: 15vw;
+    min-width: 150px;
+    max-width: 300px;
+    height: 3rem;
+}
+
+
+.btn-custom-cancel-producer {
+    padding: 0.5rem 2rem;
+    height: 3rem;
+    min-width: 100px;
+    max-width: 220px;
+}
+

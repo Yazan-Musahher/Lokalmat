@@ -1,0 +1,44 @@
+/* src/components/Header.css */
+.navbar-brand {
+    flex-grow: 1; /* Makes the brand take the available space */
+    font-size: 32px;
+    text-align: center;
+    color: white !important;
+}
+
+/* Right-aligned search and profile */
+.navbar .d-flex {
+    margin-left: auto; /* Pushes the form to the right */
+}
+
+.navbar-toggler {
+    border: none !important; /* Remove the default border */
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    color: #e6e6e6 !important;
+}
+
+/* Adjust the size of the icons */
+.navbar .fa-search, .navbar .fa-user-circle {
+    font-size: 1.5rem;
+}
+
+/* Styling for the user's name next to the icon */
+.navbar span {
+    align-self: center; /* Vertical align */
+    font-weight: bold;
+}
+
+.navbar.custom-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    height: 10vh; /* Or whatever your header height is */
+    background-color: var(--primary-color);
+    border-bottom: 1px solid var(--secondary-color);
+}
+

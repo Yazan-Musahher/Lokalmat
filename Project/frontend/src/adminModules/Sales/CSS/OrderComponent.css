@@ -1,0 +1,47 @@
+﻿
+#OrderStatusId{
+    border-radius: 10px;
+
+}
+.status_ok {
+    background-color: green;
+    color: white;
+
+}
+
+.status_behandles {
+    background-color: yellow;
+    color: black;
+}
+
+.status_venter {
+    background-color: red;
+    color: white;
+
+}
+.negative-profit{
+    color: red;
+}
+.low-profit{
+    color: blue;
+}
+.high-profit{
+    color: green;
+}
+
+.financialTable{
+    font-size: 0.8em;
+        
+        /*max-height: 100px;*/
+        overflow-y: auto;
+        overflow-x: auto;
+        text-align: center;
+    max-width: 600px;
+    max-height: 150px;
+    margin: auto;
+}
+.financialTable thead th, .financialTable tbody td{
+    padding: 0.4em;
+    
+    
+}

@@ -1,0 +1,20 @@
+﻿#VurderingsId{
+    border-radius: 10px;
+
+}
+.rating-high {
+    background-color: green;
+    color: white;
+
+}
+
+.rating-medium {
+    background-color: yellow;
+    color: black;
+}
+
+.rating-low {
+    background-color: red;
+    color: white;
+
+}

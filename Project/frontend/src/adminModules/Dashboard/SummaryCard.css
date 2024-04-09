@@ -1,0 +1,41 @@
+.summary-card {
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #FFF; /* Default background */
+}
+
+.summary-card-title {
+    font-size: 0.9rem; /* Adjusted for smaller title */
+    color: #666; /* Grey color for title */
+    margin-bottom: 0.5rem;
+    text-align: left; /* Align text to the left */
+}
+
+.summary-card-content {
+    display: flex;
+    align-items: center;
+    text-align: left; /* Align text to the left */
+}
+.summary-card-value {
+    font-size: 1.5rem;
+    margin-left: 10px;
+}
+
+.summary-card-value .sign {
+    margin-right: 5px; /* Space between sign and value */
+}
+
+.summary-card-value .sign.plus {
+    color: green;
+}
+
+.summary-card-value .sign.minus {
+    color: red;
+}
+
+

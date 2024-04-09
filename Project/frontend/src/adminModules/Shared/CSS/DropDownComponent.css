@@ -1,0 +1,14 @@
+﻿.status_custom {
+    border: 1px solid #30421A !important;
+    color: #30421A !important ;
+    background-color: transparent  !important;
+    
+}
+
+.dropdown_menu_cost{
+    color: white !important;
+    background-color: #30421A !important;
+    padding: 0.5rem  !important;
+    /*  transform: translateX(-75px) !important;*/
+
+}

@@ -1,0 +1,48 @@
+@host=http://localhost:5018
+
+POST {{host}}/product/register
+Content-Type: application/json
+
+{
+    "productName": "Apple Juice",
+    "unitPrice": 4.99,
+    "description": "This is apple juice",
+    "CategoryId": "b581da3d-5d72-46fe-a3ac-341996f6fd12",
+    "ProductDiscounts": [
+        {
+            "discountPercentage": 0.12,
+            "startDate": "2021-01-01",
+            "endDate": "2021-12-31"
+        }
+    ],
+    "images": [
+        {
+            "url": "http://example.com/apple-juice.png",
+            "alt": "An image of freshly squeezed apple juice.",
+            "title": "Apple Juice",
+            "contentType": "image/png"
+        },
+        {
+            "url": "http://example.com/apple-juice-2.png",
+            "alt": "Another image of freshly squeezed apple juice.",
+            "title": "Apple Juice Side View",
+            "contentType": "image/png"
+        }
+    ],
+    "inventories": [
+        {
+            "UnitsInStock": 100,
+            "UnitsOnOrder": 10,
+            "ReorderLevel": 10,
+            "Location": "Aisle 12, Shelf 3"
+            
+        }
+    ],
+    "statusHistories": [
+        {
+            "ProductStatus": "Active",
+            "description": ""
+        }
+    ]
+}
+

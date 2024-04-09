@@ -1,0 +1,42 @@
+## Modular monolith with domain driven design and clean architecture
+### What is a modular monolith?
+-	A modular monolith is an architectural approach that divides the application's domain into smaller, more manageable components or modules. It encourages organising the codebase into logical and structural directories, separating concerns, and clarifying boundaries between system functionalities.
+
+-	Each module within the monolith can have its responsibilities and dependencies, making it easier to reason about, test, and maintain.
+
+### Each module is divided into four layers and integration events project:
+#####	Presentation layer which contains two projects API and Contacts.
+-	The Presentation Layer serves as the interface to the external world. It's where the system's controllers reside, acting as endpoints. These controllers are responsible for translating incoming request data into a format that the application's core logic can understand. Conversely, they take the output from the Application Layer and transform it into appropriate responses for the client. Essentially, the Presentation Layer mediates communication between the user and the application, ensuring that data is correctly received, and responses are suitably formatted.
+
+###	Application layer  
+-	We want that this layer to have the use cases in our system using CQRS which make it easy to understand the use case and clear code flow.
+-	This Layer is designed to have use cases, which are represented as commands and queries following the Command Query Responsibility Segregation (CQRS) pattern. This architectural pattern separates the read operations (queries) from the write operations (commands), this gives us a clear and organized code structure that aligns with each use case's intent. By doing so, the Application Layer promotes maintainability and clarity, making it straightforward for us to navigate and understand the system's behaviors and workflows.
+###	Domain layer
+-	The domain of software refers to the specific subject area, knowledge base, or field of activity to which a program is applied by the user. https://www.domainlanguage.com/ddd/reference/ , Eric Evans
+###	Infrastructure layer
+-	This layer is where the external systems are interacted with. For example, here we can setup a library to wrap a third-party Web API, database, or identity provider. This layer is dependent on the Application Core. This layer defines the implementation of the abstractions defined in the Application layer.
+###	Integration event project
+-	The Integration Event Project is the designated area where communication with other modules is exclusively permitted.
+-	For now, we can use mediator to send either a command or a query to the mediator and this package will invoke the appropriate command or query handler based on the command or query that we pass it. 
+### How to Create a Module?
+-	Each module contains six projects, and each project is simply a class library in .NET. To create a module, you can start by creating a module folder. Then run the command “dotnet new classlib -o moduleName.projectName” in the terminal. This will create a new class library with the specified module and project names. Afterward, add the new project to the solution file .sln using the command “dotnet sln LokalProdusert.sln add ./moduleName/projectName/moduleName.projectName.csproj”.
+### How to add a Reference between layers?
+-	Refer to the design in Figma to determine the correct layering or project dependencies. To add a reference from one project to another, use the command “dotnet add ./moduleName/projectName/moduleName.projectName.csproj reference ./fromModuleName/fromProjectName/fromModuleName.fromProjectName.csproj”. Replace moduleName.projectName with the name of the module and project you want to add the reference to, and fromModuleName.fromProjectName with the name of the module and project you are referencing.
+### Key advantages:
+-	Should support the Single Responsibility Principle (SRP): Each handler is dedicated to a single action.
+-	Should support the Interface Segregation Principle (ISP): Each handler implements an interface with exactly one method.
+-	Should support the Parameter Object pattern: Commands and Queries are encapsulated as objects, which facilitates serialization/deserialization.
+-	Provides an easy way to apply the Decorator pattern: This is useful for handling cross-cutting concerns without cluttering core logic.
+-	Should promote Loose Coupling through the use of the Mediator pattern: This separates the invoker of a request from the handler of the request, enhancing modularity.
+### Areas of interest:
+-	Modular monolith: 
+-	Clean architecture
+-	CQSR
+-	Domain driven design
+-	Event storming
+-	Event driven architecture.
+-	Mediator
+-	https://github.com/kgrzybek/modular-monolith-with-ddd 
+-	https://www.ssw.com.au/rules/rules-to-better-clean-architecture/ 
+### Setting Up the Code Base:
+-	Clone the repository onto your local machine. Ensure that you navigate to the root directory of the project, which is named LokalProdusert. Run the command docker-compose up from this directory. The Docker configuration is set up such that port 5018 is used for the backend/server and port 3000 is used for the frontend/client (React).

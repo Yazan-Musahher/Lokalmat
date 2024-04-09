@@ -1,0 +1,12 @@
+@host=http://localhost:5018
+@productId=64010e3c-766a-45a5-948f-e8d14735ed8c
+@imageId=d05dd3ae-148b-4d83-ba06-4a6c213fdd3a
+
+
+DELETE {{host}}/product/{{productId}}/deleteImage/{{imageId}}
+Content-Type: application/json
+
+{
+    "productId": "{{productId}}",
+    "imageId": "{{imageId}}"
+}

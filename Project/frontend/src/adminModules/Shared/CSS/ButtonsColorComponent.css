@@ -1,0 +1,16 @@
+﻿.btn_botm  {
+    border: 1px solid #30421A !important;
+    color: #30421A !important ;
+    background-color: transparent  !important;
+}
+.btn_botm:hover {
+    color: #fff !important;
+    background-color: #30421A !important;
+}
+
+.btn_add_new {
+    border: 1px solid #30421A !important;
+    color: #ffff !important ;
+    background-color: #30421A  !important;
+
+}

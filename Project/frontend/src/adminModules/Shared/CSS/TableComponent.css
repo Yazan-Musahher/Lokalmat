@@ -1,0 +1,23 @@
+﻿.table-responsive{
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#tableResponsiveId thead th {
+    position: sticky;
+    top: 0;
+    font-size: larger;
+    background: white;
+}
+
+
+#tableResponsiveId .table td {
+    vertical-align: middle; /* Align the content of all td elements to the middle */
+    
+}
+
+/* Styles for Firefox */
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: darkgrey #f1f1f1;
+}

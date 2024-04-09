@@ -1,0 +1,7 @@
+/backend/Docs/SalesModule/
+.vs
+server
+client
+.gitlab-ci.yml
+docker-compose.yml
+.idea/

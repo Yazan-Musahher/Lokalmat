@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransportHub.Contracts\TransportHub.Contracts.csproj" />
+    <ProjectReference Include="..\TransportHub.Application\TransportHub.Application.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+ <ItemGroup>
+   <PackageReference Include="Mapster" />
+   <PackageReference Include="Mapster.DependencyInjection" />
+   <PackageReference Include="Microsoft.AspNetCore.Mvc" />
+   <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+</Project>

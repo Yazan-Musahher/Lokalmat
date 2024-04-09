@@ -1,0 +1,38 @@
+
+.shared-layout-body {
+    background-color: var(--primary-color); /* Your desired background color */
+}
+
+
+.content-area {
+    min-height: calc(100vh - 10vh); /* For making the whole content area colored (full height - header) */
+    margin-top: 10vh;
+    background-color: var(--primary-color) !important;
+    padding-top: 0;
+    overflow: hidden;
+}
+
+/* This will adjust the main content margin when the sidebar is open */
+.main-content {
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-right: 25px;
+    transition: margin-left 0.3s ease;
+}
+
+.main-content-expanded {
+    margin-top: 25px;
+    margin-left: 150px; /* Adjust as needed */
+    margin-right: 25px;
+}
+
+@media (max-width: 768px) {
+    .main-content-expanded {
+
+        margin: 25px; /* Adjust as needed */
+
+    }
+}
+
+
+

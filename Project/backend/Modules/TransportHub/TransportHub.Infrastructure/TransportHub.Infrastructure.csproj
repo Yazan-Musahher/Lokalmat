@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransportHub.Application\TransportHub.Application.csproj" />
+    <ProjectReference Include="..\TransportHub.Domain\TransportHub.Domain.csproj" />
+    <ProjectReference Include="..\..\..\LokalProdusert.Shared\LokalProdusert.Shared.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+     <PackageReference Include="Mapster" />
+     <PackageReference Include="Mapster.DependencyInjection" />
+     <PackageReference Include="Microsoft.Extensions.Configuration" />
+     <PackageReference Include="Microsoft.Extensions.Options" />
+     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+     <PackageReference Include="MongoDB.Driver" />
+     <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+</Project>

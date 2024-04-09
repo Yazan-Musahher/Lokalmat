@@ -1,0 +1,12 @@
+@host=http://localhost:5018
+
+POST {{host}}/product/addDiscount
+Content-Type: application/json
+
+{
+    "productId": "64010e3c-766a-45a5-948f-e8d14735ed8c",
+    "discountPercentage": 0.28,
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31",
+    "categoryId": "b581da3d-5d72-46fe-a3ac-341996f6fd12"
+}

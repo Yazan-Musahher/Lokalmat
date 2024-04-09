@@ -1,0 +1,16 @@
+﻿/* CSS/CardComponent.css */
+.info-card {
+    margin-bottom: 1rem;
+}
+
+.info-icon {
+    padding: 1rem;
+    font-size: 1.7rem; 
+    color: #073403; 
+    margin-bottom: 3rem;
+}
+
+.info-count {
+    font-size: 1.5rem; 
+    font-weight: bold; 
+}

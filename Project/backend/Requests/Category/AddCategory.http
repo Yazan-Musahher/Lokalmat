@@ -1,0 +1,8 @@
+@host=http://localhost:5018
+
+POST {{host}}/categories/add
+Content-Type: application/json
+
+{
+    "CategoryName": "Test"
+}

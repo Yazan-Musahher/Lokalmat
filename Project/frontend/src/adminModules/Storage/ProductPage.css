@@ -1,0 +1,45 @@
+/* Add space between buttons */
+
+.tab-custom.active {
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+.tab-custom.inactive {
+    color: #b0b0b0;
+    background-color: transparent;
+}
+
+
+
+.btn-custom-submit-product {
+    margin-right: 1rem;
+    width: 18vw;
+    min-width: 150px;
+    max-width: 300px;
+    height: 3rem;
+}
+
+.btn-custom-submit-discount {
+    padding: 0.5rem 2rem;
+    height: 3rem;
+    width: 150px;
+}
+
+.btn-custom-cancel-discount {
+    padding: 0.5rem 2rem;
+    height: 3rem;
+    width: 90px;
+}
+
+.btn-custom-cancel-product {
+    padding: 0.5rem 2rem;
+    height: 3rem;
+}
+
+
+
+
+
+
+

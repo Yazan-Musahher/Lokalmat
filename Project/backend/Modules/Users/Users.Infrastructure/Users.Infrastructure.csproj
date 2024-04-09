@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Users.Domain\Users.Domain.csproj" />
+    <ProjectReference Include="..\Users.Application\Users.Application.csproj" />
+    <ProjectReference Include="..\..\..\LokalProdusert.Shared\LokalProdusert.Shared.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+     <PackageReference Include="Mapster" />
+     <PackageReference Include="Mapster.DependencyInjection" />
+     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+     <PackageReference Include="Microsoft.Extensions.Configuration" />
+     <PackageReference Include="Microsoft.Extensions.Options" />
+     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+     <PackageReference Include="MongoDB.Driver" />
+     <PackageReference Include="Newtonsoft.Json" />
+     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+  </ItemGroup>
+
+</Project>

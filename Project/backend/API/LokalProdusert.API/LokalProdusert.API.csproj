@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Quartz.Extensions.Hosting" />
+    <PackageReference Include="Autofac" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Sales\Sales.API\Sales.API.csproj" />
+    <ProjectReference Include="..\..\Modules\Sales\Sales.Contracts\Sales.Contracts.csproj" />
+    <ProjectReference Include="..\..\Modules\Sales\Sales.Application\Sales.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Sales\Sales.Infrastructure\Sales.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\LokalProdusert.Shared\LokalProdusert.Shared.csproj" />
+    <ProjectReference Include="..\..\Modules\TransportHub\TransportHub.API\TransportHub.API.csproj" />
+    <ProjectReference Include="..\..\Modules\TransportHub\TransportHub.Application\TransportHub.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\TransportHub\TransportHub.Infrastructure\TransportHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Payments\Payments.API\Payments.API.csproj" />
+    <ProjectReference Include="..\..\Modules\Payments\Payments.Application\Payments.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Payments\Payments.Infrastructure\Payments.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\Users.API\Users.API.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\Users.Application\Users.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\Users.Infrastructure\Users.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Administration\Administration.API\Administration.API.csproj" />
+    <ProjectReference Include="..\..\Modules\Administration\Administration.Application\Administration.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Administration\Administration.Infrastructure\Administration.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

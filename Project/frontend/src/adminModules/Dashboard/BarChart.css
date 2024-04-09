@@ -1,0 +1,6 @@
+/* Add a class in your CSS file */
+.chart-container {
+    position: relative; /* new */
+    height: 250px; /* for example, or any other height */
+    width: 100%;
+}
