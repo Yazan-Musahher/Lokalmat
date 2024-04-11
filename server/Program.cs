@@ -57,6 +57,8 @@ builder.Services.AddAuthentication(options =>
     });
 
 
+
+
 var app = builder.Build();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
