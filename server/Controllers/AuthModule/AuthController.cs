@@ -29,42 +29,43 @@ namespace server.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp(UserSignupModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Check if the user already exists
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null)
-                {
-                    return BadRequest(new { message = "User already exists." });
-                }
-
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    Name = model.Name,
-                    LastName = model.LastName,
-                    Address = model.Address,
-                    Phone = model.Phone,
-                    UserType = model.UserType,
-                    EmailConfirmed = true // just temporary, should implement Email confirmation for new users 
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    // You might want to generate an email confirmation token here
-                    // and send it to the user before marking them as confirmed.
-                    return Ok(new { message = "User created successfully" });
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return BadRequest(new {message = "Register information is not valid"});
+            }
+            
+            // Check if the user already exists
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                return BadRequest(new { message = "User already exists." });
             }
 
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                Name = model.Name,
+                LastName = model.LastName,
+                Address = model.Address,
+                Phone = model.Phone,
+                UserType = model.UserType,
+                EmailConfirmed = true // just temporary, should implement Email confirmation for new users 
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                // You might want to generate an email confirmation token here
+                // and send it to the user before marking them as confirmed.
+                return Ok(new { message = "User created successfully" });
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            } 
             return BadRequest(ModelState);
         }
 
@@ -72,24 +73,24 @@ namespace server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
-
-                if (result.Succeeded)
-                {
-                    var user = await _userManager.FindByEmailAsync(model.Email);
-                    var token = GenerateJwtToken(user);
-
-                    return Ok(new { token = token });
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Incorrect username or password.");
-                }
+                return BadRequest(new {message = "Login information is not valid"});
             }
+            
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
 
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                var token = GenerateJwtToken(user);
+
+                return Ok(new { token = token });
+            }
+            
+            ModelState.AddModelError(string.Empty, "Incorrect username or password.");
             return BadRequest(ModelState);
+            
         }
 
         private string GenerateJwtToken(ApplicationUser user)
@@ -110,7 +111,85 @@ namespace server.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        
+        [HttpPut("updateUser")]
+        public async Task<IActionResult> UpdateUser(UserUpdateModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new {message = "Update information is not valid"});
+            }
+            
+            // Check that email and password is correct
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new {message = "Incorrect password"});
+            }
+            
+            // Update user with new information
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (model.Name != null)
+                user.Name = model.Name;
+            if (model.LastName != null)
+                user.LastName = model.LastName;
+            if (model.Address != null)
+                user.Address = model.Address;
+            if (model.Phone != null)
+                user.Phone = model.Phone;
+            if (model.NewEmail != null)
+            {
+                user.Email = model.NewEmail;
+                user.UserName = model.NewEmail;
+                user.NormalizedEmail = model.NewEmail.ToUpper();
+                user.NormalizedUserName = model.NewEmail.ToUpper();
+                // This should force you to confirm your email again
+            }
 
+
+            Console.WriteLine(user.Email);
+            Console.WriteLine(user.Name);
+            Console.WriteLine(user.LastName);
+            Console.WriteLine(user.Address);
+            Console.WriteLine(user.Phone);
+                
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(new {message = "User update failed"});
+            }
+                
+            return Ok(new { message = "User updated"});
+            
+        }
+        
+        [HttpPut("updatePassword")]
+        public async Task<IActionResult> UpdatePassword(UpdatePasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new {message = "Update information is not valid"});
+            }
+            
+            // Check that email and password is correct
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new {message = "Incorrect password"});
+            }
+            
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var updateResult = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+            
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(new {message = "User update failed"});
+            }
+
+            return Ok(new { token = token });
+            
+        }
     }
 
     public class UserSignupModel
@@ -128,5 +207,23 @@ namespace server.Controllers
     {
         public string Email { get; set; }
         public string Password { get; set; }
+    }
+    
+    public class UserUpdateModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string? Name { get; set; }
+        public string? LastName { get; set; }
+        public string? Address { get; set; }
+        public string? Phone { get; set; }
+        public string? NewEmail { get; set; }
+    }
+
+    public class UpdatePasswordModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string NewPassword { get; set; }
     }
 }
