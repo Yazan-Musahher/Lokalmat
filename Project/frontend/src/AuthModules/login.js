@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
 import Navbar from './navbar';
+import HomeAuth from '../userModules/HomeModulesAuth/Home/HomeAuth';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ const handleSubmit = async (e) => {
             localStorage.setItem('token', data.token);
             localStorage.setItem('email', loginData.email);
 
-            navigate('/'); // Redirect to the homepage or dashboard as needed
+            navigate('/HomeAuth'); // Redirect to the homepage or dashboard as needed
         } else {
             setLoginError('Login failed. Please check your credentials.');
         }
