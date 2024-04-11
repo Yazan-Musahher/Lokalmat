@@ -145,13 +145,6 @@ namespace server.Controllers
                 user.NormalizedUserName = model.NewEmail.ToUpper();
                 // This should force you to confirm your email again
             }
-
-
-            Console.WriteLine(user.Email);
-            Console.WriteLine(user.Name);
-            Console.WriteLine(user.LastName);
-            Console.WriteLine(user.Address);
-            Console.WriteLine(user.Phone);
                 
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
