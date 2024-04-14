@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
 import Navbar from './navbar';
@@ -15,6 +15,14 @@ const Login = () => {
 
     // State for login error message
     const [loginError, setLoginError] = useState('');
+
+    useEffect(() => {
+        // Check if token exists, if so redirect to HomeAuth
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/HomeAuth');
+        }
+    }, [navigate]);
 
     // Handle form input changes
     const handleChange = (e) => {
@@ -43,11 +51,18 @@ const handleSubmit = async (e) => {
             // Store the token and email in localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('email', loginData.email);
+            localStorage.setItem('name', data.name);
+            localStorage.setItem('role', data.role);
 
-            navigate('/HomeAuth'); // Redirect to the homepage or dashboard as needed
-        } else {
-            setLoginError('Login failed. Please check your credentials.');
-        }
+ // Redirect based on user role
+ if (data.role === 'PrivateUser') {
+    navigate('/HomeAuth');
+} else if (data.role === 'Manufacturer') {
+    navigate('/admin');
+}
+} else {
+setLoginError('Login failed. Please check your credentials.');
+}
     } catch (error) {
         console.error('An error occurred:', error);
         setLoginError('An error occurred during login. Please try again.');
@@ -96,7 +111,7 @@ const handleSubmit = async (e) => {
                     </form>
                     <div className="mt-6 flex justify-center">
                         <div className="text-sm">
-                            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                            <a href="/Password-request/" className="font-medium text-indigo-600 hover:text-indigo-500">
                                 Glemte passord?
                             </a>
                         </div>
