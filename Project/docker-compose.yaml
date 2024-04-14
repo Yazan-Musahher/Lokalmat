@@ -1,17 +1,55 @@
 version: '3.8'
 
 services:
-  backend:
-    image: "${backend_IMAGE}"
+  server:
+    build:
+      context: ../server
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     ports:
-      - "8000:80"
+      - "5176:8080"
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8000:8080"
+    networks:
+      - app-network
 
   frontend:
-    image: "${frontend_IMAGE}"
-    ports:
-      - "3000:80"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+      - frontend_build:/usr/share/caddy
+    networks:
+      - app-network
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"      # HTTP traffic
+      - "443:443"    # HTTPS traffic
+    volumes:
+      - frontend_build:/usr/share/caddy
+      - ./frontend/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - app-network
+
+volumes:
+  caddy_data:
+  caddy_config:
+  frontend_build:
+
+networks:
+  app-network:
+    driver: bridge

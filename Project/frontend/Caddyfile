@@ -1,0 +1,20 @@
+{
+    local_certs
+    http_port  80
+    https_port 443
+}
+
+localhost {
+    tls internal
+    root * /usr/share/caddy
+    file_server
+    encode gzip
+
+    handle /api/* {
+        reverse_proxy server:8080
+    }
+
+    handle /backend/* {
+        reverse_proxy backend:8080
+    }
+}
