@@ -17,11 +17,14 @@ import StockComponent from './adminModules/Sales/Components/StockComponent';
 import OrderComponent from './adminModules/Sales/Components/OrderComponent';
 import TransporterComponent from './adminModules/Sales/Components/TransporterComponent';
 import AdminControlComponent from './adminModules/Sales/Components/AdminControlComponent';
+import TransporterProfilePage from './adminModules/TransporterProfilePage';
 
 // AuthModules
 import Login from './AuthModules/login';
 import Signup from './AuthModules/signup';
-import TransporterProfilePage from './adminModules/TransporterProfilePage';
+import PwdRequest from './AuthModules/pwdrequest';
+import PwdReset from './AuthModules/pwdreset';
+
 
 // HomeModules
 import Home from './userModules/HomeModules/Home/Home';
@@ -42,8 +45,10 @@ function App() {
                 <Routes>
                     {/* Home Modules */}
                     <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/login/" element={<Login />} />
+                    <Route path="/signup/" element={<Signup />} />
+                    <Route path="/Password-request/" element={<PwdRequest />} />
+                    <Route path="/Password-Reset/" element={<PwdReset />} />
 
                     {/* Protected Home Module */}
                     <Route path="/HomeAuth" element={<ProtectedRoute element={HomeAuth} />} />
