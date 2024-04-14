@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using server.Data;
 using server.Models.AuthModule;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
@@ -95,22 +96,54 @@ namespace server.Controllers
 
         private string GenerateJwtToken(ApplicationUser user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            // Retrieve the key from appsettings.json
-            var key = Encoding.ASCII.GetBytes(_configuration["JWT:Key"]);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Email, user.Email),
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = creds
             };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
+
             return tokenHandler.WriteToken(token);
         }
+
+        
+            // GET: /auth/currentUser
+            [HttpGet("currentUser")]
+            // we should add Authorize option here in production, Yazan
+            public async Task<IActionResult> CurrentUser()
+            {
+                // The User property is populated from the JWT bearer token
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                var userModel = new
+                {
+                    Name = user.Name,
+                    LastName = user.LastName,
+                    Address = user.Address,
+                    Phone = user.Phone,
+                    Email = user.Email
+                    
+                };
+
+                return Ok(userModel);
+            }
         
         [HttpPut("updateUser")]
         public async Task<IActionResult> UpdateUser(UserUpdateModel model)
@@ -124,7 +157,7 @@ namespace server.Controllers
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
             if (!result.Succeeded)
             {
-                return BadRequest(new {message = "Incorrect password"});
+                return BadRequest(new {message = "Feil Passord"});
             }
             
             // Update user with new information
