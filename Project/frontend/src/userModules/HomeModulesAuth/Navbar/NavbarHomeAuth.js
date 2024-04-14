@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link} from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
-import NavMobile from './NavMobileAuth';  // Importing the NavMobile component
+import NavMobile from './NavMobileAuth';
+import HomeAuth from '../Home/HomeAuth';
 
 const NavbarHomeAuth = () => {
 
     // get user email from local storage
-    const userEmail = localStorage.getItem('email');
+    const userEmail = localStorage.getItem('name');
     // Function to handle logout
     const handleLogout = () => {
     localStorage.removeItem('token'); // Clears the token from local storage
     localStorage.removeItem('email'); // Clears the email from local storage
-    navigate('/login'); // Redirects the user to the login page
+    localStorage.removeItem('name'); // Clears the name from local storage
+    localStorage.removeItem('role'); // Clears the role from local storage
+    navigate('/login/'); // Redirects the user to the login page
   };
 
 
@@ -47,7 +50,7 @@ const NavbarHomeAuth = () => {
     <nav className={`${showNavbar ? 'top-0' : '-top-full'} fixed left-0 w-full z-10 transition-transform duration-300 ${!isAtTop && 'bg-white shadow-md'}`}>
       <div className="max-w-16xl mx-auto px-4 sm:px-12 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <a href="/" className="flex-shrink-0 flex items-center no-underline text-green-600 mr-auto">
+          <a href="HomeAuth" className="flex-shrink-0 flex items-center no-underline text-green-600 mr-auto">
             <span className="font-bold text-xl sm:text-5xl ml-40">Lokalmat</span>
           </a>
           <NavMobile isNavExpanded={isNavExpanded} setIsNavExpanded={setIsNavExpanded} />
