@@ -29,6 +29,12 @@ import Home from './userModules/HomeModules/Home/Home';
 // HomeModulesAuth
 import HomeAuth from './userModules/HomeModulesAuth/Home/HomeAuth';
 
+// ProfileModules
+import Profile from './userModules/ProfileModules/Profile';
+
+
+
+
 function App() {
     return (
         <AuthProvider>
@@ -41,6 +47,7 @@ function App() {
 
                     {/* Protected Home Module */}
                     <Route path="/HomeAuth" element={<ProtectedRoute element={HomeAuth} />} />
+                    <Route path="/Profile" element={<ProtectedRoute element={Profile} />} />
 
                     {/* Admin Module Routes */}
                     <Route path="/admin" element={<SharedLayout />}>
