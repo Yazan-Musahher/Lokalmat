@@ -1,73 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; // adjust the path as necessary
 import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
 import Navbar from './navbar';
-import HomeAuth from '../userModules/HomeModulesAuth/Home/HomeAuth';
 
 const Login = () => {
     const navigate = useNavigate();
-
-    // States for email and password
-    const [loginData, setLoginData] = useState({
-        email: '',
-        password: '',
-    });
-
-    // State for login error message
+    const { login } = useAuth();
+    const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [loginError, setLoginError] = useState('');
 
     useEffect(() => {
-        // Check if token exists, if so redirect to HomeAuth
-        const token = localStorage.getItem('token');
-        if (token) {
+        if (localStorage.getItem('token')) {
             navigate('/HomeAuth');
         }
     }, [navigate]);
 
-    // Handle form input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setLoginData(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
+        setLoginData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Handle form submission
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        const response = await fetch('http://localhost:5176/Auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(loginData),
-        });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('http://localhost:5176/Auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginData),
+            });
 
-        const data = await response.json(); // Assuming the response is JSON
-
-        if (response.ok) {
-            // Store the token and email in localStorage
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('email', loginData.email);
-            localStorage.setItem('name', data.name);
-            localStorage.setItem('role', data.role);
-
- // Redirect based on user role
- if (data.role === 'PrivateUser') {
-    navigate('/HomeAuth');
-} else if (data.role === 'Manufacturer') {
-    navigate('/admin');
-}
-} else {
-setLoginError('Login failed. Please check your credentials.');
-}
-    } catch (error) {
-        console.error('An error occurred:', error);
-        setLoginError('An error occurred during login. Please try again.');
-    }
-};
+            const data = await response.json();
+            if (response.ok) {
+                login(data.token, {
+                    email: loginData.email,
+                    name: data.name,
+                    role: data.role
+                }); // Pass user details to login
+                const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/admin';
+                navigate(redirectTo, { replace: true });
+            } else {
+                setLoginError('Login failed. Please check your credentials.');
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+            setLoginError('An error occurred during login. Please try again.');
+        }
+    };
     
     return (
         <>

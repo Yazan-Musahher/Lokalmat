@@ -9,7 +9,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
 
     if (!isAuthenticated) {
         console.log("Redirecting to login..."); // Debugging line
-        return <Navigate to="/login" />;
+        return <Navigate to="/login/" />;
     }
 
     return <Component {...rest} />;

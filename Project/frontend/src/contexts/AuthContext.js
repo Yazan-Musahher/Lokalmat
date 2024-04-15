@@ -2,42 +2,57 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext({
     isAuthenticated: false,
+    user: null,
     login: () => {},
     logout: () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);
 
-const checkToken = () => !!localStorage.getItem('token');
+const checkAuth = () => {
+    return {
+        isAuthenticated: !!localStorage.getItem('token'),
+        user: {
+            email: localStorage.getItem('email'),
+            name: localStorage.getItem('name'),
+            role: localStorage.getItem('role'),
+        }
+    };
+};
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(checkToken());
+    const [authState, setAuthState] = useState(checkAuth());
 
     useEffect(() => {
-        // This setup helps ensure that any changes to localStorage's token
-        // outside of this app's control are also reflected.
         const handleStorageChange = () => {
-            setIsAuthenticated(checkToken());
+            setAuthState(checkAuth());
         };
 
         window.addEventListener('storage', handleStorageChange);
-
-        // Clean up the event listener when the component unmounts
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    const login = (token) => {
+    const login = (token, userDetails) => {
         localStorage.setItem('token', token);
-        setIsAuthenticated(true);
+        localStorage.setItem('email', userDetails.email);
+        localStorage.setItem('name', userDetails.name);
+        localStorage.setItem('role', userDetails.role);
+        setAuthState({
+            isAuthenticated: true,
+            user: userDetails
+        });
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
+        localStorage.clear(); // This clears all localStorage data including token, email, name, role
+        setAuthState({
+            isAuthenticated: false,
+            user: null
+        });
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ ...authState, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
