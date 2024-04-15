@@ -1,21 +1,25 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+﻿# Use the official image as a parent image.
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["server.csproj", "./"]
-RUN dotnet restore "server.csproj"
-COPY . .
-WORKDIR "/src/"
-RUN dotnet build "server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Copy csproj and restore as distinct layers.
+COPY *.csproj ./
+RUN dotnet restore
 
-FROM build AS publish
-RUN dotnet publish "server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Copy everything else and publish.
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+# Build runtime image.
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
-# Set the environment variable to development
+COPY --from=build-env /app/out .
+
+# Development environment settings
 ENV ASPNETCORE_ENVIRONMENT=Development
-ENTRYPOINT ["dotnet", "server.dll", "--environment=Development"]
+
+# Expose the development ports (HTTP and HTTPS)
+EXPOSE 5176
+EXPOSE 7263
+
+ENTRYPOINT ["dotnet", "server.dll"]
