@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from "./navbar";
+import {API_BASE_URL, AUTH_REQUEST_PASSWORD_RESET_URL } from '../credentials';
 
 const PwdRequest = () => {
     const [email, setEmail] = useState('');
@@ -8,22 +9,25 @@ const PwdRequest = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        const response = await fetch('http://localhost:5176/Auth/requestPasswordReset', {
+        const passwordResetUrl = `${API_BASE_URL}${AUTH_REQUEST_PASSWORD_RESET_URL}`;
+        
+        const response = await fetch(passwordResetUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email: email }),
         });
-
+    
         const data = await response.json();
-
+    
         if (response.ok) {
             setMessage('Vennligst sjekk e-posten din for å tilbakestille passordet ditt.');
         } else {
             setMessage(data.message || 'An error occurred. Please try again.');
         }
     };
+    
 
     return (
         <>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavbarHomeAuth from '../HomeModulesAuth/Navbar/NavbarHomeAuth';
+import {API_BASE_URL,AUTH_CURRENT_USER_URL, AUTH_UPDATE_USER_URL } from '../../credentials';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -17,16 +18,15 @@ const Profile = () => {
 
     useEffect(() => {
         const getCurrentUserData = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                // If there's no token, handle the logic of unauthorized user here
-                // It might include redirecting to the login page or displaying an error message
-                setErrorMessage('Please log in to view this page.');
-                return;
-            }
-
             try {
-                const response = await fetch('http://localhost:5176/auth/currentUser', {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    setErrorMessage('Your session has expired, please log in again.');
+                    return;
+                }
+    
+                const currentUserUrl = `${API_BASE_URL}${AUTH_CURRENT_USER_URL}`;
+                const response = await fetch(currentUserUrl, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -49,9 +49,10 @@ const Profile = () => {
                 setErrorMessage('Error fetching user data: ' + error.message);
             }
         };
-
+    
         getCurrentUserData();
     }, []);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -65,9 +66,10 @@ const Profile = () => {
             setErrorMessage('Your session has expired, please log in again.');
             return;
         }
-
+    
         try {
-            const response = await fetch('http://localhost:5176/auth/updateUser', {
+            const updateUserUrl = `${API_BASE_URL}${AUTH_UPDATE_USER_URL}`;
+            const response = await fetch(updateUserUrl, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +77,7 @@ const Profile = () => {
                 },
                 body: JSON.stringify(profileData) // Send the profile data as-is
             });
-
+    
             const data = await response.json();
             if (response.ok) {
                 setSuccessMessage('Profil redigering vellykket');
@@ -88,6 +90,7 @@ const Profile = () => {
             setErrorMessage('En feil oppstod: ' + error.message);
         }
     };
+    
 
     
 

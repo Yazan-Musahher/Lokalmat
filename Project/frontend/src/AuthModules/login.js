@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext'; // adjust the path as necessary
+import { useAuth } from '../contexts/AuthContext';
 import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
 import Navbar from './navbar';
-
+import {API_BASE_URL, AUTH_LOGIN_URL} from '../credentials';
 const Login = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
@@ -23,8 +23,10 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const loginUrl = `${API_BASE_URL}${AUTH_LOGIN_URL}`;
+        console.log("REQUEST: ", loginUrl)
         try {
-            const response = await fetch('http://localhost:5176/Auth/login', {
+            const response = await fetch(loginUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(loginData),
@@ -36,7 +38,7 @@ const Login = () => {
                     email: loginData.email,
                     name: data.name,
                     role: data.role
-                }); // Pass user details to login
+                });
                 const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/admin';
                 navigate(redirectTo, { replace: true });
             } else {
@@ -46,6 +48,7 @@ const Login = () => {
             console.error('An error occurred:', error);
             setLoginError('An error occurred during login. Please try again.');
         }
+        
     };
     
     return (

@@ -29,15 +29,16 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const signupUrl = `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_AUTH_SIGNUP_URL}`;
         try {
-            const response = await fetch('http://localhost:5176/auth/signup', {
+            const response = await fetch(signupUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(signupData)
             });
-
+    
             if (response.ok) {
                 setSignupSuccess('Registrering vellykket. Omdirigerer til innlogging...');
                 setTimeout(() => navigate('/login/'), 3000);
@@ -50,6 +51,7 @@ const Signup = () => {
             setSignupError('An error occurred during signup. Please try again.');
         }
     };
+    
 
     return (
         <>
