@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from "./navbar";
 import { useSearchParams } from 'react-router-dom';
+import {API_BASE_URL,AUTH_RESET_PASSWORD_URL } from '../credentials';
 
 const PwdReset = () => {
     const [searchParams] = useSearchParams();
@@ -18,13 +19,14 @@ const PwdReset = () => {
         const email = searchParams.get('email');
         const token = searchParams.get('token');
 
-        const response = await fetch('http://localhost:5176/Auth/resetPassword', {
+        const response = await fetch(`${API_BASE_URL}${AUTH_RESET_PASSWORD_URL}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, token, newPassword: password }),
         });
+        
 
         const data = await response.json();
 
