@@ -146,6 +146,35 @@ public class ProductController : ControllerBase
 
         return cities;
     }
+    
+// GET: api/Product/price?minPrice=100&maxPrice=200
+    [HttpGet("price")]
+    public async Task<ActionResult<IEnumerable<Product>>> GetProductsByPriceRange([FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice)
+    {
+        // Get all products if minPrice and maxPrice are not specified
+        var query = _context.Products.AsQueryable();
+
+        if (minPrice.HasValue)
+        {
+            query = query.Where(p => p.Price >= minPrice.Value);
+        }
+
+        if (maxPrice.HasValue)
+        {
+            query = query.Where(p => p.Price <= maxPrice.Value);
+        }
+
+        var filteredProducts = await query.ToListAsync();
+
+        if (!filteredProducts.Any())
+        {
+            return NotFound("No products found within the specified price range.");
+        }
+
+        return Ok(filteredProducts);
+    }
+
+
 
 
     private bool ProductExists(Guid id)
