@@ -133,6 +133,20 @@ public class ProductController : ControllerBase
 
         return NoContent();
     }
+    
+    // GET: api/Product/cities
+    [HttpGet("cities")]
+    public async Task<ActionResult<IEnumerable<string>>> GetCities()
+    {
+        var cities = await _context.Products
+            .Where(p => p.City != null) // Ensure the city is not null
+            .Select(p => p.City)
+            .Distinct() // Get distinct cities
+            .ToListAsync();
+
+        return cities;
+    }
+
 
     private bool ProductExists(Guid id)
     {
