@@ -4,6 +4,7 @@ using server.Data;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using server.Models.AuthModule;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -16,59 +17,86 @@ public class ProductController : ControllerBase
         _context = context;
     }
 
-// GET: api/Product
+    
+    // GET: api/Product
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts(
+    public async Task<ActionResult<IEnumerable<dynamic>>> GetProducts(
         string search = null, 
         string city = null, 
         decimal? maxPrice = null, 
         int? minPopularity = null, 
         double? minRating = null)
     {
-        var query = _context.Products.AsQueryable();
+        var query = _context.Products
+            .Select(p => new {
+                p.Id,
+                p.Name,
+                p.Description,
+                p.Price,
+                p.Category,
+                p.ImageUrl,
+                p.Stock,
+                p.Popularity,
+                p.Rating,
+                p.RatingCount,
+                p.City,
+                p.PostalCode,
+                ManufacturerName = _context.Users.Where(u => u.Id == p.ManufacturerId).Select(u => u.Name).FirstOrDefault()
+            });
 
         if (!string.IsNullOrEmpty(search))
         {
-            // Søk etter produktnavn eller beskrivelse
             query = query.Where(p => p.Name.Contains(search) || p.Description.Contains(search));
         }
 
         if (!string.IsNullOrEmpty(city))
         {
-            // Filtrer etter by
             query = query.Where(p => p.City == city);
         }
 
         if (maxPrice.HasValue)
         {
-            // Filtrer etter makspris
             query = query.Where(p => p.Price <= maxPrice.Value);
         }
 
         if (minPopularity.HasValue)
         {
-            // Filtrer etter minimum popularitet
             query = query.Where(p => p.Popularity >= minPopularity.Value);
         }
 
         if (minRating.HasValue)
         {
-            // Filtrer etter minimum rangering
             query = query.Where(p => p.Rating >= minRating.Value);
         }
 
-        // Sorter etter popularitet og rangering som eksempel
         query = query.OrderByDescending(p => p.Popularity).ThenByDescending(p => p.Rating);
 
-        return await query.ToListAsync();
+        var products = await query.ToListAsync();
+        return Ok(products);
     }
-
 
     // GET: api/Product/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(Guid id)
+    public async Task<ActionResult<dynamic>> GetProduct(Guid id)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Products
+            .Where(p => p.Id == id)
+            .Select(p => new {
+                p.Id,
+                p.Name,
+                p.Description,
+                p.Price,
+                p.Category,
+                p.ImageUrl,
+                p.Stock,
+                p.Popularity,
+                p.Rating,
+                p.RatingCount,
+                p.City,
+                p.PostalCode,
+                ManufacturerName = _context.Users.Where(u => u.Id == p.ManufacturerId).Select(u => u.Name).FirstOrDefault()
+            })
+            .FirstOrDefaultAsync();
 
         if (product == null)
         {
@@ -80,8 +108,18 @@ public class ProductController : ControllerBase
 
     // POST: api/Product
     [HttpPost]
-    public async Task<ActionResult<Product>> PostProduct(Product product)
+    public async Task<ActionResult<Product>> PostProduct([FromBody] Product product, [FromQuery] string manufacturerEmail)
     {
+        var manufacturer = await _context.Users
+            .Where(u => u.Email == manufacturerEmail && u.UserType == "Manufacturer")
+            .FirstOrDefaultAsync();
+
+        if (manufacturer == null)
+        {
+            return BadRequest("Invalid manufacturer email or the specified user is not a manufacturer.");
+        }
+
+        product.ManufacturerId = manufacturer.Id;
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
@@ -98,7 +136,6 @@ public class ProductController : ControllerBase
         }
 
         _context.Entry(product).State = EntityState.Modified;
-
         try
         {
             await _context.SaveChangesAsync();
@@ -133,26 +170,41 @@ public class ProductController : ControllerBase
 
         return NoContent();
     }
-    
+
     // GET: api/Product/cities
     [HttpGet("cities")]
     public async Task<ActionResult<IEnumerable<string>>> GetCities()
     {
         var cities = await _context.Products
-            .Where(p => p.City != null) // Ensure the city is not null
+            .Where(p => p.City != null)
             .Select(p => p.City)
-            .Distinct() // Get distinct cities
+            .Distinct()
             .ToListAsync();
 
         return cities;
     }
-    
-// GET: api/Product/price?minPrice=100&maxPrice=200
+
+    // GET: api/Product/price?minPrice=100&maxPrice=200
     [HttpGet("price")]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProductsByPriceRange([FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice)
+    public async Task<ActionResult<IEnumerable<dynamic>>> GetProductsByPriceRange([FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice)
     {
-        // Get all products if minPrice and maxPrice are not specified
-        var query = _context.Products.AsQueryable();
+        var query = _context.Products
+            .Select(p => new {
+                p.Id,
+                p.Name,
+                p.Description,
+                p.Price,
+                p.Category,
+                p.ImageUrl,
+                p.Stock,
+                p.Popularity,
+                p.Rating,
+                p.RatingCount,
+                p.City,
+                p.PostalCode,
+                ManufacturerName = _context.Users.Where(u => u.Id == p.ManufacturerId).Select(u => u.Name).FirstOrDefault()
+            })
+            .AsQueryable();
 
         if (minPrice.HasValue)
         {
@@ -164,18 +216,14 @@ public class ProductController : ControllerBase
             query = query.Where(p => p.Price <= maxPrice.Value);
         }
 
-        var filteredProducts = await query.ToListAsync();
-
-        if (!filteredProducts.Any())
+        var products = await query.ToListAsync();
+        if (!products.Any())
         {
             return NotFound("No products found within the specified price range.");
         }
 
-        return Ok(filteredProducts);
+        return Ok(products);
     }
-
-
-
 
     private bool ProductExists(Guid id)
     {
