@@ -128,6 +128,7 @@ const ExploreArea = () => {
                 <h3 className="text-lg font-semibold my-2">{product.name}</h3>
                 <p className="text-gray-600">{`${product.price} kr`}</p>
                 <p className="text-sm text-gray-500">{product.description}</p>
+                <p className="text-sm text-green-700">Dette produktet er solgt av <span className="font-bold text-lg">{product.manufacturerName}</span></p>
                 {/* ... additional product details ... */}
               </div>
             ))}
