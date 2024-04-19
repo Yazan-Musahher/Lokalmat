@@ -1,3 +1,6 @@
+using server.Models.AuthModule;
+using System.Text.Json.Serialization;
+
 public class Product
 {
     public Guid Id { get; set; }
@@ -8,12 +11,16 @@ public class Product
     public string ImageUrl { get; set; }
     public int Stock { get; set; }
 
-    // Nye felt for filtrering og søk
-    public int Popularity { get; set; } // Antall salg eller visninger
-    public double Rating { get; set; } // Gjennomsnittlig rangering
-    public int RatingCount { get; set; } // Antall anmeldelser som gjennomsnittet er basert på
+    // New fields for filtering and search
+    public int Popularity { get; set; } // Number of sales or views
+    public double Rating { get; set; } // Average rating
+    public int RatingCount { get; set; } // Number of reviews that the average is based on
 
-    // Felt for sted
-    public string City { get; set; } // By
-    public int PostalCode { get; set; } // Postnummer
+    // Field for location
+    public string City { get; set; } // City
+    public int PostalCode { get; set; } // Postal code
+
+    // Reference to the manufacturer who creates the product
+    public string ManufacturerId { get; set; } // Foreign key to ApplicationUser who is the manufacturer
+    
 }
