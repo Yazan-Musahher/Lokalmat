@@ -16,7 +16,7 @@ const CartModal = ({ isOpen, closeCart }) => {
         <div className="flex flex-col divide-y divide-gray-200">
           {cartItems.map(item => (
             <div key={item.id} className="flex justify-between items-center py-2">
-              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover mr-2" /> {/* Image added here */}
+              <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover mr-2" />
               <span className="font-semibold">{item.name}</span>
               <span>{item.quantity}x</span>
               <span className="font-semibold">{item.price} kr</span>
