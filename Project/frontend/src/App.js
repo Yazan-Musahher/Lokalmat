@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
 import ProtectedRoute from './userModules/HomeModulesAuth/ProtectedRoute';
 
 // AdminModules
@@ -31,6 +32,7 @@ import Home from './userModules/HomeModules/Home/Home';
 
 // HomeModulesAuth
 import HomeAuth from './userModules/HomeModulesAuth/Home/HomeAuth';
+import PaymentDone from './userModules/HomeModulesAuth/Home/PaymentDone';
 
 // ProfileModules
 import Profile from './userModules/ProfileModules/Profile';
@@ -49,6 +51,8 @@ function App() {
                     <Route path="/signup/" element={<Signup />} />
                     <Route path="/Password-request/" element={<PwdRequest />} />
                     <Route path="/Password-Reset/" element={<PwdReset />} />
+                    <Route path="/order-success/" element={<PaymentDone />} />
+
 
                     {/* Protected Home Module */}
                     <Route path="/HomeAuth" element={<ProtectedRoute element={HomeAuth} />} />
