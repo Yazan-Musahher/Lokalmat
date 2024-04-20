@@ -12,7 +12,6 @@ const HomeAuth = () => {
             <NavbarHome />
             <Header />
             <ExploreArea />
-            <LocalProducers/>
             <ProductNews/>
             <Footer/>
         </>

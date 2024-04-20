@@ -1,30 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link} from 'react-scroll';
+import { Link } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../../contexts/CartContext';
+import CartModal from '../Home/CartModal';
 import NavMobile from './NavMobileAuth';
 import HomeAuth from '../Home/HomeAuth';
 
 const NavbarHomeAuth = () => {
-
-    // get user email from local storage
-    const userEmail = localStorage.getItem('name');
-    // Function to handle logout
-    const handleLogout = () => {
-    localStorage.removeItem('token'); // Clears the token from local storage
-    localStorage.removeItem('email'); // Clears the email from local storage
-    localStorage.removeItem('name'); // Clears the name from local storage
-    localStorage.removeItem('role'); // Clears the role from local storage
-    navigate('/login/'); // Redirects the user to the login page
-  };
-
-
-
-
+  const navigate = useNavigate();
+  const { cartItems } = useCart();
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
   const lastScrollY = useRef(window.scrollY);
-  const navigate = useNavigate();
+
+  // Get user email from local storage
+  const userEmail = localStorage.getItem('name');
+
+  // Function to handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
+    localStorage.removeItem('name');
+    localStorage.removeItem('role');
+    navigate('/login/');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,7 +39,7 @@ const NavbarHomeAuth = () => {
         setShowNavbar(true);
       }
       lastScrollY.current = window.scrollY;
-    }
+    };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
@@ -47,6 +49,7 @@ const NavbarHomeAuth = () => {
   }, []);
 
   return (
+    <>
     <nav className={`${showNavbar ? 'top-0' : '-top-full'} fixed left-0 w-full z-10 transition-transform duration-300 ${!isAtTop && 'bg-white shadow-md'}`}>
       <div className="max-w-16xl mx-auto px-4 sm:px-12 lg:px-8">
         <div className="flex justify-between h-16 items-center">
@@ -74,13 +77,22 @@ const NavbarHomeAuth = () => {
             <a href="/Profile" className="inline-flex items-center px-4 py-2 border border-transparent no-underline text-sm font-medium rounded-full text-white bg-green-900 hover:bg-green-600 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-200 active:bg-green-700">
               {userEmail || 'User Name'}
             </a>
-            <button onClick={handleLogout} className="inline-flex items-center px-4 py-2 border border-transparent no-underline text-sm font-medium rounded-full text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 active:bg-red-700">
+              <button onClick={() => setIsCartOpen(true)} className="relative flex items-center">
+                <svg className="w-6 h-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                  <path d="M3 3h18l-2 14H5L3 3z"></path>
+                  <path d="M16 18a2 2 0 100 4 2 2 0 000-4zM8 18a2 2 0 100 4 2 2 0 000-4z"></path>
+                </svg>
+                <span className="absolute top-0 right-0   text-green px-1 py-0.5 text-xxs font-bold mr-6 mt-0.5">{itemCount}</span>
+              </button>
+              <button onClick={handleLogout} className="inline-flex items-center px-4 py-2 border border-transparent no-underline text-sm font-medium rounded-full text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 active:bg-red-700">
                 Log out
               </button>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <CartModal isOpen={isCartOpen} closeCart={() => setIsCartOpen(false)} />
+    </>
   );
 };
 

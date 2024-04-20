@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Element } from 'react-scroll';
+import { useCart } from '../../../contexts/CartContext';
 import NytNorge from '../../../Assets/Produsenter/NytNorge.png';
 import Bama from '../../../Assets/Produsenter/Bama.png';
 import Debio from '../../../Assets/Produsenter/Debio.png';
@@ -11,6 +12,9 @@ const ExploreArea = () => {
   const [products, setProducts] = useState([]);
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
+
+  //Using the addToCart function from context
+  const { addToCart } = useCart(); 
 
   useEffect(() => {
     // Fetch cities
@@ -128,8 +132,15 @@ const ExploreArea = () => {
                 <h3 className="text-lg font-semibold my-2">{product.name}</h3>
                 <p className="text-gray-600">{`${product.price} kr`}</p>
                 <p className="text-sm text-gray-500">{product.description}</p>
-                <p className="text-sm text-green-700">Dette produktet er solgt av <span className="font-bold text-lg">{product.manufacturerName}</span></p>
-                {/* ... additional product details ... */}
+                <p className="text-sm text-green-700">Dette produktet selges av <span className="font-bold text-lg">{product.manufacturerName}</span></p>
+                {/* ... more product details later ... */}
+              {/* Add to cart button */}
+            <button
+            onClick={() => addToCart(product)}
+              className="mt-3 bg-gray-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              + Legg til handlekurv
+            </button>
               </div>
             ))}
           </div>
