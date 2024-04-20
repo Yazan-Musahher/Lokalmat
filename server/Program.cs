@@ -10,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // Define a custom SchemaId strategy
+    options.CustomSchemaIds(type => type.FullName);
+});
 
 // Add services to the container.
 var postgresConnectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection");
@@ -28,10 +32,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        builder => builder.WithOrigins("http://localhost:3000")
+        policy => policy.WithOrigins("http://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials());
+            .AllowCredentials()
+            .WithExposedHeaders("Location"));  // Expose Location header
 });
 
 // JWT Token
