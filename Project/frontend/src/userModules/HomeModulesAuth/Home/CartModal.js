@@ -6,6 +6,39 @@ const CartModal = ({ isOpen, closeCart }) => {
   const navigate = useNavigate();
   const { cartItems, removeFromCart } = useCart();
 
+  const handleCheckout = async () => {
+    const productIds = cartItems.map(item => item.id);
+  
+    try {
+      const response = await fetch('http://localhost:5176/api/Payment/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productIds),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Failed to create checkout session:', errorData);
+        alert(`There was a problem with your payment: ${errorData.error}`);
+        return;
+      }
+  
+      const { url } = await response.json();
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('URL is missing');
+      }
+    } catch (error) {
+      console.error('Failed to create checkout session:', error);
+      alert('There was a problem with your payment. Please try again.');
+    }
+  };
+  
+  
+
   if (!isOpen) {
     return null;
   }
@@ -26,7 +59,7 @@ const CartModal = ({ isOpen, closeCart }) => {
         </div>
         <div className="flex justify-end space-x-4 mt-4">
           <button onClick={closeCart} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded shadow">Lukk</button>
-          <button onClick={() => navigate('/payment')} className="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow">Gå til betaling</button>
+          <button onClick={handleCheckout} className="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow">Gå til betaling</button>
         </div>
       </div>
     </div>
