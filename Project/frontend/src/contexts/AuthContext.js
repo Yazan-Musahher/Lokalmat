@@ -16,6 +16,7 @@ const checkAuth = () => {
             email: localStorage.getItem('email'),
             name: localStorage.getItem('name'),
             role: localStorage.getItem('role'),
+            userId: localStorage.getItem('userId')
         }
     };
 };
@@ -37,6 +38,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('email', userDetails.email);
         localStorage.setItem('name', userDetails.name);
         localStorage.setItem('role', userDetails.role);
+        localStorage.setItem('userId', userDetails.userId);
         setAuthState({
             isAuthenticated: true,
             user: userDetails

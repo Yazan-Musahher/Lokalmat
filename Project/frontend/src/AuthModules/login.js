@@ -35,7 +35,8 @@ const Login = () => {
                 login(data.token, {
                     email: loginData.email,
                     name: data.name,
-                    role: data.role
+                    role: data.role,
+                    userId: data.userId
                 }); // Pass user details to login
                 const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/admin';
                 navigate(redirectTo, { replace: true });

@@ -91,7 +91,7 @@ namespace server.Controllers
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             var token = GenerateJwtToken(user);
-            return Ok(new { token = token, email = user.Email, name = user.Name, role = user.UserType });
+            return Ok(new { token = token, email = user.Email, name = user.Name, role = user.UserType,  userId = user.Id });
         }
         // start of managing request password for user
         [HttpPost("requestPasswordReset")]
