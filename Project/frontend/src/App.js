@@ -59,10 +59,11 @@ function App() {
                     <Route path="/Profile" element={<ProtectedRoute element={Profile} />} />
 
                     {/* Admin Module Routes */}
-                    <Route path="/admin" element={<SharedLayout />}>
+                    <Route path="/produsent" element={<SharedLayout />}>
                         <Route index element={<Navigate replace to="dashboard" />} />
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="stock" element={<StockComponent />} />
+                        <Route path="stock/product-page" element={<ProductPage />} />
                         <Route path="stock/product-page/:productId" element={<ProductPage />} />
                         <Route path="products" element={<Products />} />
                         <Route path="order" element={<OrderComponent />} />
