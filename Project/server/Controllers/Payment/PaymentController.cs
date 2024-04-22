@@ -1,31 +1,28 @@
-﻿    using Microsoft.AspNetCore.Mvc;
-    using Stripe;
-    using Stripe.Checkout;
-    using Microsoft.EntityFrameworkCore;
-    using server.Data;
-    using server.Models.OrderModule;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using server.Data;
+using server.Models.OrderModule;
+using Stripe;
+using Stripe.Checkout;
 
-    namespace server.Controllers.Payment
+namespace server.Controllers.Payment;
+
+[Route("api/[controller]")]
+[ApiController]
+public class PaymentController : Controller
+{
+    private readonly IConfiguration _configuration;
+    private readonly ApplicationDbContext _context;
+    private readonly ILogger<PaymentController> _logger;
+
+    public PaymentController(IConfiguration configuration, ApplicationDbContext context,
+        ILogger<PaymentController> logger)
     {
-        [Route("api/[controller]")]
-        [ApiController]
-        public class PaymentController : Controller
-        {
-            private readonly IConfiguration _configuration;
-            private readonly ApplicationDbContext _context;
-            private readonly ILogger<PaymentController> _logger;
-
-            public PaymentController(IConfiguration configuration, ApplicationDbContext context, ILogger<PaymentController> logger)
-            {
-                _configuration = configuration;
-                _context = context;
-                _logger = logger;
-                StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
-            }
+        _configuration = configuration;
+        _context = context;
+        _logger = logger;
+        StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
+    }
 
     [HttpPost("create-checkout-session")]
     public ActionResult Create(CreateSessionRequest request)
@@ -37,19 +34,14 @@
         }
 
         if (request.ProductIds == null || !request.ProductIds.Any())
-        {
             return BadRequest("Product IDs list cannot be empty.");
-        }
 
         var domain = "http://localhost:3000";
         var products = _context.Products
             .Where(p => request.ProductIds.Contains(p.Id))
             .ToList();
 
-        if (products.Count != request.ProductIds.Count)
-        {
-            return BadRequest("One or more products are not available.");
-        }
+        if (products.Count != request.ProductIds.Count) return BadRequest("One or more products are not available.");
 
         var options = new SessionCreateOptions
         {
@@ -68,14 +60,14 @@
                         {
                             { "productId", product.Id.ToString() }
                         }
-                    },
+                    }
                 },
-                Quantity = 1,
+                Quantity = 1
             }).ToList(),
             Mode = "payment",
             SuccessUrl = domain + "/order-success/?session_id={CHECKOUT_SESSION_ID}",
             CancelUrl = domain + "/order-failure",
-            ClientReferenceId = request.UserId  // Set ClientReferenceId to userId
+            ClientReferenceId = request.UserId // Set ClientReferenceId to userId
         };
 
         var service = new SessionService();
@@ -92,100 +84,112 @@
     }
 
 
-            [HttpGet("finalize-payment")]
-            public async Task<IActionResult> FinalizePayment(string session_id)
+    [HttpGet("finalize-payment")]
+    public async Task<IActionResult> FinalizePayment(string session_id)
+    {
+        if (string.IsNullOrEmpty(session_id))
+        {
+            _logger.LogWarning("Session ID is null or empty.");
+            return BadRequest("Session ID cannot be empty.");
+        }
+
+        var sessionService = new SessionService();
+        try
+        {
+            var session = await sessionService.GetAsync(session_id, new SessionGetOptions
             {
-                if (string.IsNullOrEmpty(session_id))
-                {
-                    _logger.LogWarning("Session ID is null or empty.");
-                    return BadRequest("Session ID cannot be empty.");
-                }
+                Expand = new List<string> { "line_items.data.price.product" }
+            });
 
-                var sessionService = new SessionService();
-                try
-                {
-                    var session = await sessionService.GetAsync(session_id, new SessionGetOptions
-                    {
-                        Expand = new List<string> { "line_items.data.price.product" }
-                    });
-
-                    if (session == null || session.PaymentStatus != "paid")
-                    {
-                        _logger.LogWarning("Session not found or payment not successful for ID: {SessionId}", session_id);
-                        return Redirect("/order-failure");
-                    }
-
-                    var userId = session.ClientReferenceId; // Retrieve UserId from ClientReferenceId
-                    if (string.IsNullOrEmpty(userId))
-                    {
-                        _logger.LogError("User ID not found in session data: {SessionId}", session_id);
-                        return Redirect("/order-failure");
-                    }
-
-                    var order = new Order
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = userId,
-                        OrderDate = DateTime.UtcNow,
-                    };
-
-                    var orderItems = new List<OrderItem>();
-                    foreach (var item in session.LineItems.Data)
-                    {
-                        if (item.Price == null || item.Price.Product == null)
-                        {
-                            _logger.LogError("Incomplete price data for session: {SessionId}", session_id);
-                            return Redirect("/order-failure");
-                        }
-
-                        if (!item.Price.Product.Metadata.TryGetValue("productId", out var productIdString) || !Guid.TryParse(productIdString, out var productId))
-                        {
-                            _logger.LogError("Product ID is missing or invalid in the metadata for session: {SessionId}", session_id);
-                            return Redirect("/order-failure");
-                        }
-
-                        orderItems.Add(new OrderItem
-                        {
-                            Id = Guid.NewGuid(),
-                            OrderId = order.Id,
-                            ProductId = productId,
-                            Quantity = (int)item.Quantity,
-                            UnitPrice = (decimal)item.Price.UnitAmount / 100
-                        });
-                    }
-
-                    order.OrderItems = orderItems;
-                    _context.Orders.Add(order);
-                    await _context.SaveChangesAsync();
-
-                    return Redirect($"/order-success/?orderId={order.Id}");
-                }
-                catch (StripeException e)
-                {
-                    _logger.LogError(e, "Stripe error finalizing payment for session: {SessionId}", session_id);
-                    return Redirect("/order-failure");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error finalizing payment for session: {SessionId}. Exception message: {Message}", session_id, ex.Message);
-                    return Redirect("/order-failure");
-                }
+            if (session == null)
+            {
+                _logger.LogWarning($"Session not found for ID: {session_id}");
+                return StatusCode(404, "Session not found.");
             }
 
-            [HttpGet("order-history/{userId}")]
-            public async Task<IActionResult> GetOrderHistory(string userId)
+            if (session.PaymentStatus != "paid")
             {
-                var orders = await _context.Orders
-                    .Where(o => o.UserId == userId)
-                    .Select(o => new
-                    {
-                        o.Id,
-                        o.OrderDate,
-                        Items = o.OrderItems.Select(oi => new { oi.ProductId, oi.Quantity, oi.UnitPrice })
-                    })
-                    .ToListAsync();
-
-                return Ok(orders);
+                _logger.LogWarning(
+                    $"Payment not successful for session ID: {session_id}, Status: {session.PaymentStatus}");
+                return StatusCode(402, "Payment not successful.");
             }
+
+            var userId = session.ClientReferenceId;
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogError($"User ID not found in session data: {session_id}");
+                return StatusCode(404, "User ID not found in session data.");
+            }
+
+            _logger.LogInformation($"Creating order for user ID: {userId}");
+            var order = new Order
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                OrderDate = DateTime.UtcNow
+            };
+
+            var orderItems = new List<OrderItem>();
+            foreach (var item in session.LineItems.Data)
+            {
+                if (item.Price == null || item.Price.Product == null)
+                {
+                    _logger.LogError($"Incomplete price data for session: {session_id}");
+                    return StatusCode(400, "Incomplete price data.");
+                }
+
+                if (!item.Price.Product.Metadata.TryGetValue("productId", out var productIdString) ||
+                    !Guid.TryParse(productIdString, out var productId))
+                {
+                    _logger.LogError($"Product ID is missing or invalid in the metadata for session: {session_id}");
+                    return StatusCode(400, "Product ID is missing or invalid.");
+                }
+
+                orderItems.Add(new OrderItem
+                {
+                    Id = Guid.NewGuid(),
+                    OrderId = order.Id,
+                    ProductId = productId,
+                    Quantity = (int)item.Quantity,
+                    UnitPrice = (decimal)item.Price.UnitAmount / 100
+                });
+            }
+
+            order.OrderItems = orderItems;
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation($"Order created successfully: {order.Id}");
+
+            // Returning a JSON response with the order ID and a success message
+            return Ok(new { Message = "Order created successfully", OrderId = order.Id });
+        }
+        catch (StripeException e)
+        {
+            _logger.LogError(e, $"Stripe error finalizing payment for session: {session_id}");
+            return StatusCode(500, "Stripe error: " + e.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                $"Error finalizing payment for session: {session_id}. Exception message: {ex.Message}");
+            return StatusCode(500, "Internal Server Error: " + ex.Message);
         }
     }
+
+
+    [HttpGet("order-history/{userId}")]
+    public async Task<IActionResult> GetOrderHistory(string userId)
+    {
+        var orders = await _context.Orders
+            .Where(o => o.UserId == userId)
+            .Select(o => new
+            {
+                o.Id,
+                o.OrderDate,
+                Items = o.OrderItems.Select(oi => new { oi.ProductId, oi.Quantity, oi.UnitPrice })
+            })
+            .ToListAsync();
+
+        return Ok(orders);
+    }
+}

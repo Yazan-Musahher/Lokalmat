@@ -1,8 +1,38 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const PaymentDone = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const initialized = useRef(false);
+
+    const searchParams = new URLSearchParams(location.search);
+    const sessionId = searchParams.get('session_id');
+
+    const finalizePayment = async (sessionId) => {
+        console.log("Session ID from URL:", sessionId);
+        const response = await fetch(`http://localhost:5176/api/Payment/finalize-payment?session_id=${sessionId}`);
+        const responseData = await response.json();
+        if (!response.ok) {
+            console.error('Error finalizing payment:', responseData);
+            navigate('/order-failure/');
+        } else {
+            console.log(responseData.Message);
+            setTimeout(() => {
+                navigate(`/HomeAuth`);
+            }, 3000);
+        }
+    };
+
+    useEffect(() => {
+        if (sessionId && !initialized.current) {
+            initialized.current = true;  // Set the flag so this effect doesn't run again for the same sessionId
+            finalizePayment(sessionId);
+        }
+        return () => {
+            initialized.current = false;  // Reset the flag when the component unmounts if needed
+        };
+    }, [sessionId]);  // The effect depends on sessionId
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-green-50">
@@ -12,12 +42,8 @@ const PaymentDone = () => {
                         <path d="M5 13l4 4L19 7"></path>
                     </svg>
                     <h2 className="text-2xl font-bold text-green-600 mb-2">Betaling Utført!</h2>
-                    <p className="text-gray-600">Din betaling har blitt behandlet vellykket.</p>
+                    <p className="text-gray-600">Vennligst vent mens vi bekrefter betalingsdetaljene dine.</p>
                 </div>
-                <button onClick={() => navigate('/HomeAuth')}
-                        className="px-6 py-2 text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 rounded-md shadow-sm">
-                    Gå tilbake
-                </button>
             </div>
         </div>
     );
