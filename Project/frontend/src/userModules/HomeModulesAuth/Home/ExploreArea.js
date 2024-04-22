@@ -123,43 +123,44 @@ const ExploreArea = () => {
             </div>
           </div>
         </div>
-        {/* Products display */}
-        <div className="flex-grow p-5">
-          <div className="grid grid-cols-3 gap-10">
-            {products.map((product) => (
-              <div key={product.id} className="border p-4">
-                <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover" />
-                <h3 className="text-lg font-semibold my-2">{product.name}</h3>
-                <p className="text-gray-600">{`${product.price} kr`}</p>
-                <p className="text-sm text-gray-500">{product.description}</p>
-                <p className="text-sm text-green-700">Dette produktet selges av <span className="font-bold text-lg">{product.manufacturerName}</span></p>
-                {/* ... more product details later ... */}
-              {/* Add to cart button */}
-            <button
-            onClick={() => addToCart(product)}
-              className="mt-3 bg-gray-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              + Legg til handlekurv
-            </button>
-              </div>
-            ))}
-          </div>
-        </div>
+{/* Products display */}
+<div className="flex-grow p-5">
+  {/* Responsive grid for products */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {products.map((product) => (
+      <div key={product.id} className="border p-4 flex flex-col">
+        <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover mb-2" />
+        <h3 className="text-lg font-semibold my-2">{product.name}</h3>
+        <p className="text-gray-600 mb-1">{`${product.price} kr`}</p>
+        <p className="text-sm text-gray-500 mb-2">{product.description}</p>
+        <p className="text-sm text-green-700 mb-2">Dette produktet selges av <span className="font-bold">{product.manufacturerName}</span></p>
+        {/* Add to cart button */}
+        <button
+          onClick={() => addToCart(product)}
+          className="mt-auto bg-gray-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          + Legg til handlekurv
+        </button>
       </div>
-      {/* VÅRE SAMARBEIDSPARTNERE section now moved down */}
+    ))}
+  </div>
+</div>
+
+      </div>
       <div className="mt-8">
-        <div className="flex items-center justify-center min-h-64">
-          <h1 className="text-5xl font-bold text-gray-800 leading-none">
-            VÅRE SAMARBEIDSPARTNERE
-          </h1>
-        </div>
-        <div className="flex items-center justify-center overflow-x-auto py-8">
-          <img src={NytNorge} alt="Nyt Norge" className="mx-4" style={{ width: '100px', height: '100px' }} />
-          <img src={Bama} alt="Bama" className="mx-4" style={{ width: '100px', height: '100px' }} />
-          <img src={Debio} alt="Debio" className="mx-4" style={{ width: '100px', height: '100px' }} />
-          <img src={Norvegia} alt="Norvegia" className="mx-4" style={{ width: '100px', height: '100px' }} />
-        </div>
-      </div>
+  <div className="flex items-center justify-center">
+    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 leading-none text-center">
+      VÅRE SAMARBEIDSPARTNERE
+    </h1>
+  </div>
+  <div className="flex items-center justify-center overflow-x-auto py-8">
+    {/* Use Tailwind's width and height utility classes instead of inline styles */}
+    <img src={NytNorge} alt="Nyt Norge" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+    <img src={Bama} alt="Bama" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+    <img src={Debio} alt="Debio" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+    <img src={Norvegia} alt="Norvegia" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+  </div>
+</div>
     </Element>
   );
 };
