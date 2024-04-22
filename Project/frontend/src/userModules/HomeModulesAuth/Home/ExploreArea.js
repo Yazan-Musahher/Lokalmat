@@ -154,7 +154,6 @@ const ExploreArea = () => {
     </h1>
   </div>
   <div className="flex items-center justify-center overflow-x-auto py-8">
-    {/* Use Tailwind's width and height utility classes instead of inline styles */}
     <img src={NytNorge} alt="Nyt Norge" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
     <img src={Bama} alt="Bama" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
     <img src={Debio} alt="Debio" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
