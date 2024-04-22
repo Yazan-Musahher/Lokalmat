@@ -1,13 +1,22 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../contexts/CartContext';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const CartModal = ({ isOpen, closeCart }) => {
   const navigate = useNavigate();
   const { cartItems, removeFromCart } = useCart();
 
   const handleCheckout = async () => {
-    const productIds = cartItems.map(item => item.id);
+    if (!localStorage.getItem('token')) { // Using localStorage to check authentication
+      alert('Please log in to continue.');
+      closeCart();
+      navigate('/login/');  // Redirect to login page if not authenticated
+      return;
+    }
+  
+    const productIds = cartItems.map(item => item.id); // This should be an array of GUIDs
+    const userId = localStorage.getItem('userId'); // Fetching userId directly from localStorage
   
     try {
       const response = await fetch('http://localhost:5176/api/Payment/create-checkout-session', {
@@ -15,8 +24,11 @@ const CartModal = ({ isOpen, closeCart }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(productIds),
+        body: JSON.stringify({ productIds, userId }), // Ensure keys match those expected by the backend
       });
+
+      console.log("Product IDs:", JSON.stringify(productIds));  // Check the format of IDs in the console
+      console.log("User ID:", userId);  // Verify that userId is logged correctly
   
       if (!response.ok) {
         const errorData = await response.json();
@@ -27,17 +39,15 @@ const CartModal = ({ isOpen, closeCart }) => {
   
       const { url } = await response.json();
       if (url) {
-        window.location.href = url;
+        window.location.href = url;  // Use navigate(url) if you prefer using React Router for navigation
       } else {
-        throw new Error('URL is missing');
+        throw new Error('Payment URL is missing');
       }
     } catch (error) {
       console.error('Failed to create checkout session:', error);
       alert('There was a problem with your payment. Please try again.');
     }
   };
-  
-  
 
   if (!isOpen) {
     return null;
@@ -53,13 +63,13 @@ const CartModal = ({ isOpen, closeCart }) => {
               <span className="font-semibold">{item.name}</span>
               <span>{item.quantity}x</span>
               <span className="font-semibold">{item.price} kr</span>
-              <button onClick={() => removeFromCart(item.id)} className="text-white bg-red-500 hover:bg-red-700 px-3 py-1 rounded">Fjerne</button>
+              <button onClick={() => removeFromCart(item.id)} className="text-white bg-red-500 hover:bg-red-700 px-3 py-1 rounded">Remove</button>
             </div>
           ))}
         </div>
         <div className="flex justify-end space-x-4 mt-4">
-          <button onClick={closeCart} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded shadow">Lukk</button>
-          <button onClick={handleCheckout} className="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow">Gå til betaling</button>
+          <button onClick={closeCart} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded shadow">Close</button>
+          <button onClick={handleCheckout} className="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow">Proceed to Checkout</button>
         </div>
       </div>
     </div>
