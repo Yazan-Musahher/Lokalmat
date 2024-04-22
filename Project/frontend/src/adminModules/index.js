@@ -21,12 +21,12 @@ function AdminModule() {
 
             <p><Link to="/admin/some-admin-page">Daniel side</Link></p>
 
-            <p><Link to="/admin/test-sharedlayout">Test SharedLayout</Link></p>
-            <p><Link to="/admin/test-header">Test Header</Link></p>
-            <p><Link to="/admin/test-sidebar">Test Sidebar</Link></p>
-            <p><Link to="/admin/stock">Varelager</Link></p>
-            <p><Link to="/admin/order">Ordre oversikt</Link></p>
-            <p><Link to="/admin/adminOverview">Annine oversikt</Link></p>
+            <p><Link to="/produsent/test-sharedlayout">Test SharedLayout</Link></p>
+            <p><Link to="/produsent/test-header">Test Header</Link></p>
+            <p><Link to="/produsent/test-sidebar">Test Sidebar</Link></p>
+            <p><Link to="/produsent/stock">Varelager</Link></p>
+            <p><Link to="/produsent/order">Ordre oversikt</Link></p>
+            <p><Link to="/produsent/adminOverview">Annine oversikt</Link></p>
             <Routes>
                 <Route path="/some-admin-page" element={<SomeAdminPage/>}/>
 

@@ -178,7 +178,7 @@ const StockComponent = () => {
     const navigate = useNavigate();
     const handleRowClick = (item) => {
         if (isEditing.size === 0) {
-            navigate(`/admin/product-page/${item.id}`);
+            navigate(`/produsent/product-page/${item.id}`);
         }
     };
     const toggleItemSelection = (event, id) => {
@@ -244,11 +244,11 @@ const StockComponent = () => {
         return "";
     };
     const handleNewProductClick = () => {
-        navigate('/admin/stock/product-page');
+        navigate('/produsent/stock/product-page');
     };
 
     const handleEditButton = (id) => {
-        navigate(`/admin/stock/product-page/${id}`);
+        navigate(`/produsent/stock/product-page/${id}`);
     };
 
 

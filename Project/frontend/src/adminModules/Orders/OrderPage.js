@@ -546,7 +546,7 @@ function OrderPage() {
                                 variant="neutral"
                                 text="Tilbake"
                                 className="btn-custom-cancel-order"
-                                onClick={() => navigate('/admin/order')}
+                                onClick={() => navigate('/produsent/order')}
                             />
                         </Col>
 

@@ -294,16 +294,16 @@ function Dashboard() {
 
             <p>-----------------------------------------------------------------------------</p>
 
-            <p><Link to="/admin/stock">Varelager</Link></p>
-            <p><Link to="/admin/order">Ordre oversikt</Link></p>
-            <p><Link to="/admin/transporter">Transportør oversikt</Link></p>
-            <p><Link to="/admin/adminOverview">Anine oversikt</Link></p>
+            <p><Link to="/produsent/stock">Varelager</Link></p>
+            <p><Link to="/produsent/order">Ordre oversikt</Link></p>
+            <p><Link to="/produsent/transporter">Transportør oversikt</Link></p>
+            <p><Link to="/produsent/adminOverview">Anine oversikt</Link></p>
 
             <p>-----------------------------------------------------------------------------</p>
-            <p><Link to="/admin/product-page">Go to Add Product Page</Link></p>
-            <p><Link to="/admin/order-page">Go to Add Order Page</Link></p>
-            <p><Link to="/admin/producer-page">Go to Produsentinfo side</Link></p>
-            <p><Link to="/admin/transporter-page">Go to TransporterInfo side</Link></p>
+            <p><Link to="/produsent/product-page">Go to Add Product Page</Link></p>
+            <p><Link to="/produsent/order-page">Go to Add Order Page</Link></p>
+            <p><Link to="/produsent/producer-page">Go to Produsentinfo side</Link></p>
+            <p><Link to="/produsent/transporter-page">Go to TransporterInfo side</Link></p>
             
 
             <Routes>
