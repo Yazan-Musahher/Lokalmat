@@ -36,9 +36,9 @@ const Login = () => {
                     email: loginData.email,
                     name: data.name,
                     role: data.role,
-                    userId: data.userId
+                    userId: data.userId,
                 }); // Pass user details to login
-                const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/admin';
+                const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/produsent';
                 navigate(redirectTo, { replace: true });
             } else {
                 setLoginError('Login failed. Please check your credentials.');

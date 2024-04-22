@@ -16,7 +16,8 @@ const checkAuth = () => {
             email: localStorage.getItem('email'),
             name: localStorage.getItem('name'),
             role: localStorage.getItem('role'),
-            userId: localStorage.getItem('userId')
+            userId: localStorage.getItem('userId'),
+            
         }
     };
 };
