@@ -33,6 +33,7 @@ import Home from './userModules/HomeModules/Home/Home';
 // HomeModulesAuth
 import HomeAuth from './userModules/HomeModulesAuth/Home/HomeAuth';
 import PaymentDone from './userModules/HomeModulesAuth/Home/PaymentDone';
+import OrderHistoric from './userModules/HomeModulesAuth/Home/OrderHistoric';
 
 // ProfileModules
 import Profile from './userModules/ProfileModules/Profile';
@@ -57,6 +58,7 @@ function App() {
                     {/* Protected Home Module */}
                     <Route path="/HomeAuth" element={<ProtectedRoute element={HomeAuth} />} />
                     <Route path="/Profile" element={<ProtectedRoute element={Profile} />} />
+                    <Route path="/Order-History/" element={<ProtectedRoute element={OrderHistoric} />} />
 
                     {/* Admin Module Routes */}
                     <Route path="/produsent" element={<SharedLayout />}>
