@@ -7,7 +7,7 @@ using Stripe.Checkout;
 
 namespace server.Controllers.Payment;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class PaymentController : Controller
 {
@@ -36,7 +36,7 @@ public class PaymentController : Controller
             if (request.ProductIds == null || !request.ProductIds.Any())
                 return BadRequest("Product IDs list cannot be empty.");
 
-            var domain = "http://localhost:3000";
+            var domain = "https://lokalprodusert.com";
             var products = _context.Products
                 .Where(p => request.ProductIds.Contains(p.Id))
                 .ToList();

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavbarHomeAuth from '../HomeModulesAuth/Navbar/NavbarHomeAuth';
+import { API_BASE_URL, AUTH_CURRENT_USER_URL } from '../../credentials';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -24,9 +25,10 @@ const Profile = () => {
                 setErrorMessage('Please log in to view this page.');
                 return;
             }
-
+    
             try {
-                const response = await fetch('http://localhost:5176/auth/currentUser', {
+                const url = `${API_BASE_URL}${AUTH_CURRENT_USER_URL}`; // Use the constants here
+                const response = await fetch(url, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -49,7 +51,7 @@ const Profile = () => {
                 setErrorMessage('Error fetching user data: ' + error.message);
             }
         };
-
+    
         getCurrentUserData();
     }, []);
 

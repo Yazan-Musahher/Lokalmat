@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using server.Models.AuthModule;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
 {

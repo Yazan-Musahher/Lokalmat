@@ -5,7 +5,7 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    image: sinus707/serverimage:2.0 
+    image: sinus707/serverimage:3.1 
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
@@ -16,7 +16,7 @@ services:
   caddy:
     build:
       context: ./frontend 
-    image: sinus707/caddyimage:2.0 
+    image: sinus707/caddyimage:3.1 
     ports:
       - "80:80"
       - "443:443"

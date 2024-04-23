@@ -1,20 +1,39 @@
 {
-    local_certs
     http_port  80
     https_port 443
 }
 
-localhost {
-    tls internal
+lokalprodusert.com {
     root * /usr/share/caddy
     file_server
     encode gzip
 
-    handle /api/* {
+    # Redirect www to non-www
+    @www host www.lokalprodusert.com
+    redir @www https://lokalprodusert.com{uri}
+
+    # Reverse proxy for API server
+    handle_path /api/* {
         reverse_proxy server:8080
     }
 
-    handle /backend/* {
-        reverse_proxy backend:8080
+    # Specific route for Swagger (if needed)
+    handle /swagger* {
+        reverse_proxy server:8080 {
+            transport http {
+                tls_insecure_skip_verify
+            }
+        }
+    }
+
+    # Serve index.html for all non-API, non-Swagger and non-file requests
+    @notAPI {
+        not path /api/* /static/* /swagger*
+        file {
+            try_files {path} /index.html
+        }
+    }
+    handle @notAPI {
+        rewrite * /index.html
     }
 }

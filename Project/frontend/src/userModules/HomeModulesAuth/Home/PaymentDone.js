@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL, PAYMENT_FINALIZE_PAYMENT_URL } from '../../../credentials';
 
 const PaymentDone = () => {
     const navigate = useNavigate();
@@ -11,18 +12,27 @@ const PaymentDone = () => {
 
     const finalizePayment = async (sessionId) => {
         console.log("Session ID from URL:", sessionId);
-        const response = await fetch(`http://localhost:5176/api/Payment/finalize-payment?session_id=${sessionId}`);
-        const responseData = await response.json();
-        if (!response.ok) {
-            console.error('Error finalizing payment:', responseData);
+        // Construct the URL using the provided API constants
+        const url = `${API_BASE_URL}${PAYMENT_FINALIZE_PAYMENT_URL}?session_id=${sessionId}`;
+        
+        try {
+            const response = await fetch(url);
+            const responseData = await response.json();
+            if (!response.ok) {
+                console.error('Error finalizing payment:', responseData);
+                navigate('/order-failure/');
+            } else {
+                console.log(responseData.Message);
+                setTimeout(() => {
+                    navigate(`/HomeAuth`);
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
             navigate('/order-failure/');
-        } else {
-            console.log(responseData.Message);
-            setTimeout(() => {
-                navigate(`/HomeAuth`);
-            }, 3000);
         }
     };
+    
 
     useEffect(() => {
         if (sessionId && !initialized.current) {

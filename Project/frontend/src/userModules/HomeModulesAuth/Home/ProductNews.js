@@ -1,7 +1,5 @@
 import React from 'react';
 import { Element } from 'react-scroll';
-
-// Mock images, replace with your actual image paths
 import bananaImage from '../../.././Assets/Productnews/Banana.jpg';
 import vitality from '../../.././Assets/Productnews/vitality-shot.png';
 import Vitality2 from '../../.././Assets/Productnews/Vitality-Shot2.jpg';
