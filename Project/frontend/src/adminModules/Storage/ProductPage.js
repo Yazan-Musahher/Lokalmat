@@ -1,428 +1,206 @@
-import React, {useEffect, useState} from 'react';
-import {Card, Button, Tabs, Tab, Row, Col, Form, Image, Container} from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Card, Button, Row, Col, Form, Alert,Toast, ToastContainer } from 'react-bootstrap';
 import GeneralBottom from "../Shared/Components/GeneralBottom/GeneralBottom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faHeart} from "@fortawesome/free-solid-svg-icons";
 import './ProductPage.css';
 import Description from "./Components/Description/Description";
 import DeliveryMethodSelect from "./Components/DeliveryMethodSelect/DeliveryMethodSelect";
 import CustomFormInput from "../Shared/Components/InputFields/CustomFormInput";
 import PriceAndDiscountSection from "./Components/PriceAndDiscountSection/PriceAndDiscountSection";
-import ImageUpload from "./Components/ImageUpload/ImageUpload";
-import {useNavigate, useParams} from "react-router-dom";
-
-
-const mockOrderDetails = {
-    '1': {
-        ratings: {
-            average: 3,
-            count: 4,
-        },
-        image: null,
-        productName: 'Gulrot',
-        productCategory: 'Grønnsak',
-        productQuantity: '124',
-        price: '7.99',
-        discountApplied: false,
-        discount: '',
-        deliveryMethod: 'bring',
-        description: 'Veldig gode gulrøtter.',
-        errors: {},
-        userErrors: ''
-    },
-    '2': {
-        ratings: {
-            average: 5,
-            count: 15,
-        },
-        image: null,
-        productName: 'Eple',
-        productCategory: 'Frukt',
-        productQuantity: '450',
-        price: '3.99',
-        discountApplied: false,
-        discount: '',
-        deliveryMethod: 'posten',
-        description: 'Dette er veldig gode epler',
-        errors: {},
-        userErrors: ''
-    },
-    // Add more mock orders as needed...
-};
-
-
-
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
 
 function ProductPage() {
-
     const navigate = useNavigate();
-
     const { productId } = useParams();
+    const { user } = useAuth(); //Retrieve user details from AuthContext
 
     const [activeTab, setActiveTab] = useState('generalInfo');
     const [showDiscountModal, setShowDiscountModal] = useState(false);
     const [discountValue, setDiscountValue] = useState('');
 
+    const [showToast, setShowToast] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false); //If the product is editing instead of adding
-
     const [productDetails, setProductDetails] = useState({
-        ratings: {
-            average: 0,
-            count: 0,
-        },
-        image: null,
-        productName: '',
-        productCategory: '',
-        productQuantity: '',
-        price: '',
-        discountApplied: false,
-        discount: '',
-        deliveryMethod: '',
+        name: '',
+        category: '',
         description: '',
-        errors: {},
-        userErrors: ''
+        imageUrl: '',
+        stock: 0,
+        city: '',
+        postalCode: 0,
+        price: 0,
+        popularity: 0,
+        rating: 0,
+        ratingCount: 0,
+        manufacturerId:'' 
     });
 
-    useEffect(() => {
-        if (productId) {
-            setIsEditMode(true);
-
-            //fetchProductData(productId);
-
-            const details = mockOrderDetails[productId];
-            if (details) {
-                setProductDetails(details);
-            } else {
-                console.error("Order details not found for orderId:", productDetails);
-                // Handle order not found
-            }
-
-        } else {
-            setIsEditMode(false);
-            // Set orderDetails to default values for a new order
-        }
-    }, [productId]);
-
-
-    const fetchProductData = async (productId) => {
-        try {
-            const response = await fetch(`api/products/${productId}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setProductDetails({ ...data, errors: {} });
-        } catch (error) {
-            console.error("Could not fetch product:", error);
-        }
-    };
-
-
-
-
-    const handleImageSelected = (imageFile) => {
-        setProductDetails((prevDetails) => ({
-            ...prevDetails,
-            image: imageFile,
-        }));
-    };
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        // Validate the input
-        const error = validateInput(name, value);
-
-        // Set input value and error message
+        const isNumeric = ['stock', 'postalCode', 'price', 'popularity', 'rating', 'ratingCount'].includes(name);
         setProductDetails(prevDetails => ({
             ...prevDetails,
-            [name]: value,
-            errors: {
-                ...prevDetails.errors,
-                [name]: error,
-            }
+            [name]: isNumeric ? parseFloat(value) || 0 : value // Use parseFloat for price and parseInt for integers
         }));
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const manufacturerEmail = localStorage.getItem('email');
 
-    // Function to open the modal
-    const handleAddDiscount = () => {
-        // Here you can pass the current price to the modal, or handle discount logic
-
-        setShowDiscountModal(true);
-    };
-
-    // Function to close the modal
-    const handleCloseDiscountModal = () => {
-        setShowDiscountModal(false);
-    };
-
-
-    const handleDeliveryMethodChange = (e) => {
-        const newDeliveryMethod = e.target.value;
-        setProductDetails(prevDetails => ({
-            ...prevDetails,
-            deliveryMethod: newDeliveryMethod,
-        }));
-    };
-
-    const handleDescriptionChange = (newDescription) => {
-        setProductDetails(prevDetails => ({
-            ...prevDetails,
-            description: newDescription
-        }));
-    };
-
-
-    const handleSubmit = async () => {
-        // Validate required fields before submission
-        const errors = {};
-        const requiredFields = ['productName', 'productCategory', 'productQuantity', 'price'];
-
-        requiredFields.forEach(field => {
-            const error = validateInput(field, productDetails[field]);
-            if (error) {
-                errors[field] = error;
-            }
-        });
-
-        setProductDetails(prevDetails => ({
-            ...prevDetails,
-            errors: errors
-        }));
-
-        if (Object.keys(errors).length === 0) {
-            console.log('Form data is valid. Preparing to submit:', productDetails);
-
-            const method = isEditMode ? 'PUT' : 'POST';
-            const apiEndpoint = isEditMode ? `${process.env.REACT_APP_API_URL}/products/${productId}` : `${process.env.REACT_APP_API_URL}/products`;
-
-            // Construct the payload for the API call
-            const payload = {
-                productName: productDetails.productName,
-                productCategory: productDetails.productCategory,
-                productQuantity: productDetails.productQuantity,
-                price: productDetails.price,
-                discountApplied: productDetails.discountApplied,
-                discount: productDetails.discountValue,
-                deliveryMethod: productDetails.deliveryMethod,
-                description: productDetails.description,
-            };
-
-            console.log('Sending the following data to the API:', payload);
-
-            try {
-                const response = await fetch(apiEndpoint, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // Include authorization header if needed
-                        // 'Authorization': `Bearer ${yourAuthToken}`
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Handle the response from the server
-                const data = await response.json();
-                console.log('Product added/updated successfully:', data);
-
-                // Optional: Reset form or redirect user
-                // setProductDetails({ ...initialFormState });
-
-            } catch (error) {
-                // Handle errors, such as displaying a notification to the user
-                console.error('There was a problem with the fetch operation:', error);
-                setProductDetails(prevDetails => ({
-                    ...prevDetails,
-                    errors: errors
-                }));
-            }
-        } else {
-            console.log('Form contains errors:', errors);
-            setProductDetails(prevDetails => ({
-                ...prevDetails,
-                userErrors: 'Det skjedde en feil. Vennligst prøv igjen senere.'
-            }));
+        if (!manufacturerEmail) {
+            alert("Manufacturer email is not available. Please login or check your settings.");
+            return;
         }
-    };
 
-    const validateInput = (name, value) => {
-        if (!value || !value.trim()) {
-            return `The ${name} field is required.`;
-        }
-        return '';
-    };
+        const url = `http://localhost:5176/api/Product?manufacturerEmail=${encodeURIComponent(manufacturerEmail)}`;
 
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productDetails)
+            });
 
-    const handleDeleteProduct = async () => {
-        // Confirm deletion with the user before proceeding
-        if (window.confirm('Er du sikker på at du vil slette dette produktet?')) {
-            try {
-                const response = await fetch(`api/products/${productDetails.id}`, {
-                    method: 'DELETE',
-                    // Additional headers and/or authorization if needed
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                console.log('Product deleted successfully');
-                // Redirect to products list or update UI accordingly
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('HTTP Error Response:', errorData);
+                throw new Error(`HTTP error! status: ${response.status} - ${errorData.message}`);
             }
+
+            const result = await response.json();
+            console.log('Product created:', result);
+            setShowToast(true);
+            setTimeout(() => {
+                navigate('/produsent/stock'); // Redirect after successful creation
+                setShowToast(false); // Reset the toast visibility
+            }, 3000); // Delay the navigation to keep the toast visible
+        } catch (error) {
+            console.error('Failed to create product:', error);
+            alert('Failed to create product. Please try again.');
         }
     };
 
     return (
         <div className="container mt-4">
+            <ToastContainer className="p-3" position="top-end">
+                <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide bg="success">
+                    <Toast.Header>
+                        <strong className="me-auto">vellykket</strong>
+                        <small>Akkurat nå</small>
+                    </Toast.Header>
+                    <Toast.Body>Produktet ble opprettet!</Toast.Body>
+                </Toast>
+            </ToastContainer>
             <Card>
                 <Card.Header as="h3" className="d-flex justify-content-between align-items-center">
-                    <span>{isEditMode ? `Endre produkt: ${productDetails.productName}` : "Legg til produkt"}</span>
+                    <span>{isEditMode ? `Endre produkt: ${productDetails.name}` : "Legg til produkt"}</span>
                     {isEditMode && (
-                        <Button variant="outline-danger" onClick={handleDeleteProduct}>
-                        Slett ordre
+                        <Button variant="outline-danger">
+                            Slett ordre
                         </Button>
                     )}
                 </Card.Header>
                 <Card.Body>
-                    <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="product-info-tabs" className="mb-3">
-                        <Tab eventKey="generalInfo" title={<span className={`tab-custom ${activeTab === 'generalInfo' ? 'active' : 'inactive'}`}>Generell info</span>}>
-                            {/* Content for General Info */}
-                        </Tab>
-                        <Tab eventKey="customerPerspective" title={<span className={`tab-custom ${activeTab === 'customerPerspective' ? 'active' : 'inactive'}`}>Kunde perspektiv</span>}>
-                            {/* Content for Customer Perspective */}
-                        </Tab>
-                        <Tab eventKey="feedback" title={<span className={`tab-custom ${activeTab === 'feedback' ? 'active' : 'inactive'}`}>Tilbakemeldinger</span>}>
-                            {/* Content for Feedback */}
-                        </Tab>
-                    </Tabs>
-
-
-
-                    {/* Rest of your product page content */}
-                    <Row>
-                        <Col md={12} className="d-flex justify-content-end mb-4">
-                                <span className="me-2">
-                                    {'★'.repeat(Math.floor(productDetails.ratings.average))}
-                                    {'☆'.repeat(5 - Math.floor(productDetails.ratings.average))}
-                                </span>
-                            <span>{productDetails.ratings.count} tilbakemeldinger</span>
-                        </Col>
-                    </Row>
-
-                    <Row>
-                        {/* First column for image */}
-                        <Col xs={12} md={12} lg={6} >
-
-                            <ImageUpload onImageSelected={handleImageSelected} />
-
-                        </Col>
-
-                        {/* Second column for product details form */}
-                        <Col xs={12} md={12} lg={6}>
-
-                            <Form>
-                            <CustomFormInput
-                                controlId="productName"
-                                label="Produktnavn*"
-                                type="text"
-                                placeholder="Skriv inn produktnavn"
-                                value={productDetails.productName}
-                                onChange={handleInputChange}
-                                name="productName" // Important: Add 'name' prop for identifying the input
-                                error={productDetails.errors.productName}
-                                labelSize={{xs: 5, sm: 4, md: 3, lg: 4 }}
-                                inputSize={{xs: 7, sm: 8, md: 6, lg: 6 }}
-                            />
-
-
-                            <CustomFormInput
-                                controlId="productCategory"
-                                label="Kategori*"
-                                type="text"
-                                placeholder="Skriv inn kategori"
-                                value={productDetails.productCategory}
-                                onChange={handleInputChange}
-                                name="productCategory"
-                                error={productDetails.errors.productCategory}
-                                labelSize={{xs: 5, sm: 4, md: 3, lg: 4 }}
-                                inputSize={{xs: 7, sm: 8, md: 6, lg: 6 }}
-                            />
-
-                            <CustomFormInput
-                                controlId="productQuantity"
-                                label="Antall*"
-                                type="number"
-                                placeholder="Skriv inn antall"
-                                value={productDetails.productQuantity}
-                                onChange={handleInputChange}
-                                name="productQuantity"
-                                error={productDetails.errors.productQuantity}
-                                labelSize={{xs: 5, sm: 4, md: 3, lg: 4 }}
-                                inputSize={{xs: 7, sm: 8, md: 6, lg: 6 }}
-                            />
-
-
-
+                {successMessage && <Alert variant="success">{successMessage}</Alert>}
+                    <Form onSubmit={handleSubmit}>
+                        <Row>
+                            <Col xs={12} md={12} lg={6}>
+                                <CustomFormInput
+                                    controlId="name"
+                                    label="Produktnavn*"
+                                    type="text"
+                                    placeholder="Skriv inn produktnavn"
+                                    value={productDetails.name}
+                                    name="name"
+                                    onChange={handleInputChange}
+                                />
+                                <CustomFormInput
+                                    controlId="category"
+                                    label="Kategori*"
+                                    type="text"
+                                    placeholder="Skriv inn kategori"
+                                    value={productDetails.category}
+                                    name="category"
+                                    onChange={handleInputChange}
+                                />
+                                <CustomFormInput
+                                    controlId="stock"
+                                    label="Antall*"
+                                    type="number"
+                                    placeholder="Skriv inn antall"
+                                    value={productDetails.stock}
+                                    name="stock"
+                                    onChange={handleInputChange}
+                                />
+                                <CustomFormInput
+                                    controlId="city"
+                                    label="By*"
+                                    type="text"
+                                    placeholder="Skriv inn By"
+                                    value={productDetails.city}
+                                    name="city"
+                                    onChange={handleInputChange}
+                                />
+                                <CustomFormInput
+                                    controlId="postalcode"
+                                    label="Postnummer*"
+                                    type="text"
+                                    placeholder="Skriv inn postnummer"
+                                    value={productDetails.postalCode}
+                                    name="postalCode"
+                                    onChange={handleInputChange}
+                                />
+                                <CustomFormInput
+                                    controlId="price"
+                                    label="Pris*"
+                                    type="number"
+                                    placeholder="Skriv inn pris"
+                                    value={productDetails.price}
+                                    name="price"
+                                    onChange={handleInputChange}
+                                />
+                                <CustomFormInput
+                                    controlId="image"
+                                    label="Bilde*"
+                                    type="text"
+                                    placeholder="Lim inn link av bilde"
+                                    value={productDetails.imageUrl}
+                                    name="imageUrl"
+                                    onChange={handleInputChange}
+                                />
                                 <PriceAndDiscountSection
                                     price={productDetails.price}
-                                    setPrice={(newPrice) => handleInputChange({ target: { name: 'price', value: newPrice }})}
-                                    onAddDiscount={handleAddDiscount}
-                                    priceError={productDetails.errors.price}
+                                    onAddDiscount={() => setShowDiscountModal(true)}
                                     showDiscountModal={showDiscountModal}
-                                    handleCloseDiscountModal={handleCloseDiscountModal}
+                                    handleCloseDiscountModal={() => setShowDiscountModal(false)}
                                     discountValue={discountValue}
                                     setDiscountValue={setDiscountValue}
                                 />
-
-
-
                                 <DeliveryMethodSelect
                                     selectedMethod={productDetails.deliveryMethod}
-                                    onChange={handleDeliveryMethodChange}
+                                    onChange={(e) => setProductDetails(prevDetails => ({
+                                        ...prevDetails,
+                                        deliveryMethod: e.target.value,
+                                    }))}
                                 />
-
-
-                                <Description onDescriptionChange={handleDescriptionChange} value={productDetails.description} />
-
-
-
-                            </Form>
-
-
-                            <Row className="justify-content-end mt-5">
-                                <Col xs={7} md={4} lg={6}>
-                                <GeneralBottom
-                                    variant="secondary"
-                                    text={isEditMode ? "Lagre endringer" : "Legg til produkt"}
-                                    className="btn-custom-submit-product"
-                                    onClick={handleSubmit}
+                                <Description
+                                    onDescriptionChange={(newDescription) => setProductDetails(prevDetails => ({
+                                        ...prevDetails,
+                                        description: newDescription
+                                    }))}
+                                    value={productDetails.description}
                                 />
-                                </Col>
-
-                                    <Col xs={4} md={3} lg={4}>
-                                <GeneralBottom
-                                    variant="neutral"
-                                    text="Tilbake"
-                                    className="btn-custom-cancel-product"
-                                    onClick={() => navigate('/admin/stock')}
-                                />
-                                    </Col>
-                            </Row>
-                        </Col>
-                        {productDetails.userErrors && (
-                            <div className="alert alert-danger" role="alert">
-                                {productDetails.userErrors}
-                            </div>
-                        )}
-
-                    </Row>
+                                <Button type="submit" variant="secondary" className="btn-custom-submit-product">
+                                    {isEditMode ? "Lagre endringer" : "Legg til produkt"}
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form>
                 </Card.Body>
             </Card>
         </div>

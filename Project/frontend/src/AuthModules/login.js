@@ -37,9 +37,10 @@ const Login = () => {
                 login(data.token, {
                     email: loginData.email,
                     name: data.name,
-                    role: data.role
+                    role: data.role,
+                    userId: data.userId,
                 });
-                const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/admin';
+                const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/produsent';
                 navigate(redirectTo, { replace: true });
             } else {
                 setLoginError('Login failed. Please check your credentials.');

@@ -15,14 +15,14 @@ function Sidebar({ isSidebarOpen }) {
 
     return (
         <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
-            <NavLink to="/admin/dashboard" className={({ isActive }) =>
+            <NavLink to="/produsent/dashboard" className={({ isActive }) =>
                 isActive ? "sidebar-item active-link" : "sidebar-item"
             }>
                 <FontAwesomeIcon icon={faColumns} className="sidebar-icon" />
                 <span>Dashboard</span>
             </NavLink>
 
-            <NavLink to="/admin/stock"
+            <NavLink to="/produsent/stock"
                      className={({ isActive }) =>
                          isActive ? "sidebar-item active-link" : "sidebar-item"
                      }>
@@ -31,28 +31,28 @@ function Sidebar({ isSidebarOpen }) {
             </NavLink>
 
 
-            <NavLink to="/admin/products" className={({ isActive }) =>
+            <NavLink to="/produsent/products" className={({ isActive }) =>
                 isActive ? "sidebar-item active-link" : "sidebar-item"
             }>
                 <FontAwesomeIcon icon={faBoxes} className="sidebar-icon" />
                 <span>Produkter</span>
             </NavLink>
 
-            <NavLink to="/admin/sales" className={({ isActive }) =>
+            <NavLink to="/produsent/sales" className={({ isActive }) =>
                 isActive ? "sidebar-item active-link" : "sidebar-item"
             }>
                 <FontAwesomeIcon icon={faShoppingCart} className="sidebar-icon" />
                 <span>Salg</span>
             </NavLink>
 
-            <NavLink to="/admin/order" className={({ isActive }) =>
+            <NavLink to="/produsent/order" className={({ isActive }) =>
                 isActive ? "sidebar-item active-link" : "sidebar-item"
             }>
                 <FontAwesomeIcon icon={faShippingFast} className="sidebar-icon" />
                 <span>Ordre</span>
             </NavLink>
 
-            <NavLink to="/admin/transporter" className={({ isActive }) =>
+            <NavLink to="/produsent/transporter" className={({ isActive }) =>
                 isActive ? "sidebar-item active-link" : "sidebar-item"
             }>
                 <FontAwesomeIcon icon={faShippingFast} className="sidebar-icon" />
