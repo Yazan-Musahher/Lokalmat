@@ -1,6 +1,0 @@
-curl https://api.stripe.com/v1/tokens \
-  -u sk_test_51MECYtCQlVocK2PjLwx3qSFRuHOnxIqWBntLu250lk0ymyMJLAGr9SFICCeAKSteVj1kCICjf9QWNTKMBWJD0Kwo00lb1VYtcs: \
-  -d card[number]=4242424242424242 \
-  -d card[exp_month]=12 \
-  -d card[exp_year]=2023 \
-  -d card[cvc]=123

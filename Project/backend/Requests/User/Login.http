@@ -1,9 +1,0 @@
-@host=http://localhost:5018
-
-POST {{host}}/users/login
-Content-Type: application/json
-
-{
-    "email": "Lars@uia.no",
-    "password": "Password1."
-}
