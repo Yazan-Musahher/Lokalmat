@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
 import Navbar from './navbar';
+import { API_BASE_URL, AUTH_SIGNUP_URL } from '../credentials';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const signupUrl = `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_AUTH_SIGNUP_URL}`;
+        const signupUrl = `${API_BASE_URL}${AUTH_SIGNUP_URL}`;
         try {
             const response = await fetch(signupUrl, {
                 method: 'POST',

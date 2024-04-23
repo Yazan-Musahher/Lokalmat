@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavbarHomeAuth from '../Navbar/NavbarHomeAuth';
+import { API_BASE_URL, PAYMENT_ORDER_HISTORY_URL  } from '../../../credentials';
 
 const OrderHistoric = () => {
   const [orders, setOrders] = useState([]);
@@ -13,21 +14,23 @@ const OrderHistoric = () => {
       setLoading(false);
       return;
     }
-
     const fetchOrders = async () => {
-      try {
-        const response = await fetch(`http://localhost:5176/api/Payment/order-history/${userId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP status ${response.status}`);
+        try {
+          // Using template literals to insert variables into the URL string
+          const url = `${API_BASE_URL}${PAYMENT_ORDER_HISTORY_URL.replace('{userId}', userId)}`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP status ${response.status}`);
+          }
+          const data = await response.json();
+          setOrders(Array.isArray(data) ? data : []);
+        } catch (err) {
+          setError(`Failed to fetch orders: ${err.message}`);
+        } finally {
+          setLoading(false);
         }
-        const data = await response.json();
-        setOrders(Array.isArray(data) ? data : []);
-      } catch (err) {
-        setError(`Failed to fetch orders: ${err.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
+      
 
     fetchOrders();
   }, []);
