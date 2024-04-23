@@ -3,9 +3,9 @@ version: '3.8'
 services:
   server:
     build:
-      context: ../server
+      context: ./server
       dockerfile: Dockerfile
-    image: sinus707/serverimage:1.0 
+    image: sinus707/serverimage:2.0 
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
@@ -13,24 +13,14 @@ services:
     networks:
       - app-network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: sinus707/frontendimage:1.0 
-    volumes:
-      - frontend_build:/app/build  # Mount build output to named volume
-    networks:
-      - app-network
-
   caddy:
-    image: caddy:2-alpine
+    build:
+      context: ./frontend 
+    image: sinus707/caddyimage:2.0 
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - frontend_build:/usr/share/caddy  # Ensure this is the same volume
-      - ./frontend/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     networks:
@@ -39,7 +29,6 @@ services:
 volumes:
   caddy_data:
   caddy_config:
-  frontend_build:
 
 networks:
   app-network:
