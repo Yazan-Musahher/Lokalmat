@@ -8,6 +8,7 @@ import CustomFormInput from "../Shared/Components/InputFields/CustomFormInput";
 import PriceAndDiscountSection from "./Components/PriceAndDiscountSection/PriceAndDiscountSection";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
+import { API_BASE_URL, PRODUCT_QUERY_BY_MANUFACTURER_URL } from '../../credentials';
 
 function ProductPage() {
     const navigate = useNavigate();
@@ -55,7 +56,7 @@ function ProductPage() {
             return;
         }
 
-        const url = `http://localhost:5176/api/Product?manufacturerEmail=${encodeURIComponent(manufacturerEmail)}`;
+        const url = `${API_BASE_URL}${PRODUCT_QUERY_BY_MANUFACTURER_URL.replace('{manufacturerEmail}', encodeURIComponent(manufacturerEmail))}`;
 
         try {
             const response = await fetch(url, {
