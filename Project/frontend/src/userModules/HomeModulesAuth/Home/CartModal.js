@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../contexts/CartContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const CartModal = ({ isOpen, closeCart }) => {
   const navigate = useNavigate();
   const { cartItems, removeFromCart } = useCart();
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false); // New state for tracking loading state
 
   const handleCheckout = async () => {
+    setIsCheckoutLoading(true); // Begin loading effect
     if (!localStorage.getItem('token')) { // Using localStorage to check authentication
       alert('Please log in to continue.');
       closeCart();
@@ -34,18 +37,21 @@ const CartModal = ({ isOpen, closeCart }) => {
         const errorData = await response.json();
         console.error('Failed to create checkout session:', errorData);
         alert(`There was a problem with your payment: ${errorData.error}`);
+        setIsCheckoutLoading(false); // Stop loading effect on error
         return;
       }
   
       const { url } = await response.json();
       if (url) {
-        window.location.href = url;  // Use navigate(url) if you prefer using React Router for navigation
+        window.location.href = url; 
       } else {
         throw new Error('Payment URL is missing');
       }
+      setIsCheckoutLoading(false);
     } catch (error) {
       console.error('Failed to create checkout session:', error);
       alert('There was a problem with your payment. Please try again.');
+      setIsCheckoutLoading(false);
     }
   };
 
@@ -63,13 +69,23 @@ const CartModal = ({ isOpen, closeCart }) => {
               <span className="font-semibold">{item.name}</span>
               <span>{item.quantity}x</span>
               <span className="font-semibold">{item.price} kr</span>
-              <button onClick={() => removeFromCart(item.id)} className="text-white bg-red-500 hover:bg-red-700 px-3 py-1 rounded">Remove</button>
+              <button onClick={() => removeFromCart(item.id)} className="text-white bg-red-500 hover:bg-red-700 px-3 py-1 rounded">Fjern</button>
             </div>
           ))}
         </div>
         <div className="flex justify-end space-x-4 mt-4">
-          <button onClick={closeCart} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded shadow">Close</button>
-          <button onClick={handleCheckout} className="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow">Proceed to Checkout</button>
+          <button onClick={closeCart} className="text-gray-700 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded shadow">Avbryt</button>
+          <button 
+          onClick={handleCheckout} 
+          className="group relative flex justify-center items-center text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow" 
+          disabled={isCheckoutLoading}
+        >
+          {isCheckoutLoading ? (
+            <AiOutlineLoading3Quarters className="animate-spin h-5 w-5 mr-2" />
+          ) : (
+            'Proceed to Checkout'
+          )}
+        </button>
         </div>
       </div>
     </div>
