@@ -27,11 +27,8 @@ const CartModal = ({ isOpen, closeCart }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ productIds, userId }), // Ensure keys match those expected by the backend
+        body: JSON.stringify({ productIds, userId }),
       });
-
-      console.log("Product IDs:", JSON.stringify(productIds));  // Check the format of IDs in the console
-      console.log("User ID:", userId);  // Verify that userId is logged correctly
   
       if (!response.ok) {
         const errorData = await response.json();
