@@ -51,6 +51,74 @@ const Signup = () => {
         }
     };
 
+    const renderUserTypeSpecificFields = () => {
+        // Common fields used in all user types
+        const commonFields = (
+            <>
+                <div>
+                    <label htmlFor="email" className="sr-only">Epost</label>
+                    <label htmlFor="email" className="field-label">Epost:</label>
+                    <input id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="ole@example.com" value={signupData.email} onChange={handleChange} />
+                </div>
+                <div>
+                    <label htmlFor="password" className="sr-only">Passord</label>
+                    <label htmlFor="password" className="field-label">Passord:</label>
+                    <input id="password" name="password" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="********" value={signupData.password} onChange={handleChange} />
+                </div>
+                <div>
+                    <label htmlFor="address" className="sr-only">Adresse</label>
+                    <label htmlFor="address" className="field-label">Adresse:</label>
+                    <input id="address" name="address" type="text" autoComplete="address" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="din adresse" value={signupData.address} onChange={handleChange} />
+                </div>
+                <div>
+                    <label htmlFor="phone" className="sr-only">Telefon nummer</label>
+                    <label htmlFor="phone" className="field-label">Telefon nummer:</label>
+                    <input id="phone" name="phone" type="tel" autoComplete="tel" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Mobil nummeret ditt" value={signupData.phone} onChange={handleChange} />
+                </div>
+            </>
+        );
+    
+        if (signupData.userType === 'PrivateUser') {
+            return (
+                <>
+                <div>
+                <label htmlFor="name" className="field-label">Navn</label>
+                <input id="name" name="name" type="text" autoComplete="name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Navnet ditt" value={signupData.name} onChange={handleChange} />
+                </div>
+                <div>
+                <label htmlFor="name" className="field-label">Etter Navn</label>
+                <input id="lastName" name="lastName" type="text" autoComplete="lastName" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Etter navn" value={signupData.lastName} onChange={handleChange} />
+                </div>
+                
+                    {commonFields}
+                </>
+            );
+        } else if (signupData.userType === 'Manufacturer') {
+            return (
+                <>
+                    <div>
+                        <label htmlFor="companyName" className="field-label">Bedrift Navn</label>
+                        <input id="name" name="name" type="text" autoComplete="name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Bedrift As" value={signupData.name} onChange={handleChange} />
+                    </div>
+                    {commonFields}
+                </>
+            );
+        } else if (signupData.userType === 'LargeHousehold') {
+            return (
+                <>
+                    <div>
+                        <label htmlFor="householdName" className="field-label">Husstand Navn</label>
+                        <input id="householdName" name="householdName" type="text" autoComplete="organization" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Storholsholdning navn" value={signupData.name} onChange={handleChange} />
+                    </div>
+                    {commonFields}
+                </>
+            );
+        }
+    
+        return null;
+    };
+    
+
     return (
         <>
             <Navbar />
@@ -60,43 +128,30 @@ const Signup = () => {
                     {signupSuccess && <div className="text-center my-4 p-3 bg-green-200 text-green-800 rounded">{signupSuccess}</div>}
                     {signupError && <div className="text-red-500 text-center mb-4">{signupError}</div>}
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="name" className="sr-only">Navn</label>
-                            <input id="name" name="name" type="text" autoComplete="name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Navnet ditt" value={signupData.name} onChange={handleChange} />
+                        <div className="space-y-2">
+                            <span className="text-gray-700">Velg en bruker type:</span>
+                            <div className="flex justify-center space-x-4">
+                                {['PrivateUser', 'Manufacturer', 'LargeHousehold'].map((type) => (
+                                    <button
+                                        key={type}
+                                        type="button"
+                                        onClick={() => setSignupData({ ...signupData, userType: type })}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors ${
+                                            signupData.userType === type ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'
+                                        }`}
+                                    >
+                                        {type}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        <div>
-                            <label htmlFor="email" className="sr-only">Epost</label>
-                            <input id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="ole@example.com" value={signupData.email} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label htmlFor="address" className="sr-only">Adresse</label>
-                            <input id="address" name="address" type="text" autoComplete="address" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="din adresse" value={signupData.address} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label htmlFor="phone" className="sr-only">Telefon nummer</label>
-                            <input id="phone" name="phone" type="tel" autoComplete="tel" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Mobil nummeret ditt" value={signupData.phone} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="sr-only">Passord</label>
-                            <input id="password" name="password" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="********" value={signupData.password} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label className="mr-2">Bruker type</label>
-                            <select name="userType" value={signupData.userType} onChange={handleChange} required className="block w-full mt-1">
-                                <option value="">Velg...</option>
-                                <option value="PrivateUser">Privat</option>
-                                <option value="Manufacturer">Produsent</option>
-                                <option value="LargeHousehold">Storhusholdning</option>
-                            </select>
-                        </div>
-                        <div>
-                            <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                Opprett konto
-                            </button>
-                        </div>
+                        {renderUserTypeSpecificFields()}
+                        <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Opprett konto
+                        </button>
                     </form>
-                    <div className="mt-6 text-center">
-                        <p className="text-sm">Har du bruker fra før?{' '}
+                    <div className="mt-6">
+                        <p className="text-sm text-center">Har du bruker fra før?{' '}
                             <a href="/login/" className="font-medium text-green-600 hover:text-green-500">
                                 Logg inn
                             </a>
@@ -112,21 +167,13 @@ const Signup = () => {
                             </div>
                         </div>
                         <div className="mt-6 grid grid-cols-2 gap-3">
-                            <div>
-                                <button type="button" className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                                    <AiFillFacebook className="h-5 w-5 mr-2" />
-                                    Facebook
-                                </button>
-                            </div>
-                            <div>
-                                <button type="button" className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
-                                    <AiFillGoogleCircle className="h-5 w-5 mr-2" />
-                                    Google
-                                </button>
-                            </div>
-                        
+                            <button type="button" className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                                <AiFillFacebook className="h-5 w-5 mr-2" /> Facebook
+                            </button>
+                            <button type="button" className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+                                <AiFillGoogleCircle className="h-5 w-5 mr-2" /> Google
+                            </button>
                         </div>
-                      
                     </div>
                 </div>
             </div>
