@@ -51,72 +51,156 @@ const Signup = () => {
         }
     };
 
-    const renderUserTypeSpecificFields = () => {
-        // Common fields used in all user types
-        const commonFields = (
+    const userTypeDisplayMapping = {
+        'PrivateUser': 'Privat',
+        'Manufacturer': 'Produsent',
+        'LargeHousehold': 'Storhusholdning'
+    };
+
+const renderUserTypeSpecificFields = () => {
+    const commonFields = (
+        <>
+            <div className="relative mb-6" data-twe-input-wrapper-init>
+            <label class="text-sm mb-2 block">Email</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                    placeholder="ole@example.com"
+                    value={signupData.email}
+                    onChange={handleChange}
+                />
+            </div>
+            <div className="relative mb-6" data-twe-input-wrapper-init>
+            <label class="text-sm mb-2 block">Passord</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                    placeholder="********"
+                    value={signupData.password}
+                    onChange={handleChange}
+                />
+            </div>
+            <div className="relative mb-6" data-twe-input-wrapper-init>
+            <label class="text-sm mb-2 block">Adresse</label>
+                <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    autoComplete="address"
+                    required
+                    className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                    placeholder="din adresse"
+                    value={signupData.address}
+                    onChange={handleChange}
+                />
+            </div>
+            <div className="relative mb-6" data-twe-input-wrapper-init>
+            <label class="text-sm mb-2 block">Mobile Nummer</label>
+                <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                    className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                    placeholder="Mobil nummeret ditt"
+                    value={signupData.phone}
+                    onChange={handleChange}
+                />
+            </div>
+        </>
+    );
+
+    if (signupData.userType === 'PrivateUser') {
+        return (
             <>
-                <div>
-                    <label htmlFor="email" className="sr-only">Epost</label>
-                    <label htmlFor="email" className="field-label">Epost:</label>
-                    <input id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="ole@example.com" value={signupData.email} onChange={handleChange} />
+            <div class="grid sm:grid-cols-2 gap-y-7 gap-x-12">
+                <div className="relative mb-6" data-twe-input-wrapper-init>
+                <label class="text-sm mb-2 block">Navn</label>
+                    <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        required
+                        className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                        placeholder="Navnet ditt"
+                        value={signupData.name}
+                        onChange={handleChange}
+                    />
                 </div>
-                <div>
-                    <label htmlFor="password" className="sr-only">Passord</label>
-                    <label htmlFor="password" className="field-label">Passord:</label>
-                    <input id="password" name="password" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="********" value={signupData.password} onChange={handleChange} />
+                <div className="relative mb-6" data-twe-input-wrapper-init>
+                <label class="text-sm mb-2 block">Etter Navn</label>
+                    <input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        autoComplete="lastName"
+                        required
+                        className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                        placeholder="Etter navn"
+                        value={signupData.lastName}
+                        onChange={handleChange}
+                    />
                 </div>
-                <div>
-                    <label htmlFor="address" className="sr-only">Adresse</label>
-                    <label htmlFor="address" className="field-label">Adresse:</label>
-                    <input id="address" name="address" type="text" autoComplete="address" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="din adresse" value={signupData.address} onChange={handleChange} />
-                </div>
-                <div>
-                    <label htmlFor="phone" className="sr-only">Telefon nummer</label>
-                    <label htmlFor="phone" className="field-label">Telefon nummer:</label>
-                    <input id="phone" name="phone" type="tel" autoComplete="tel" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Mobil nummeret ditt" value={signupData.phone} onChange={handleChange} />
+                {commonFields}
                 </div>
             </>
         );
-    
-        if (signupData.userType === 'PrivateUser') {
-            return (
-                <>
-                <div>
-                <label htmlFor="name" className="field-label">Navn</label>
-                <input id="name" name="name" type="text" autoComplete="name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Navnet ditt" value={signupData.name} onChange={handleChange} />
+    } else if (signupData.userType === 'Manufacturer') {
+        return (
+            <>
+                <div className="relative mb-6" data-twe-input-wrapper-init>
+                <label class="text-sm mb-2 block">Bedrift Navn</label>
+                    <input
+                        id="companyName"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        required
+                        className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+                        placeholder="Bedrift As"
+                        value={signupData.name}
+                        onChange={handleChange}
+                    />
                 </div>
-                <div>
-                <label htmlFor="name" className="field-label">Etter Navn</label>
-                <input id="lastName" name="lastName" type="text" autoComplete="lastName" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Etter navn" value={signupData.lastName} onChange={handleChange} />
-                </div>
+                {commonFields}
                 
-                    {commonFields}
-                </>
-            );
-        } else if (signupData.userType === 'Manufacturer') {
-            return (
-                <>
-                    <div>
-                        <label htmlFor="companyName" className="field-label">Bedrift Navn</label>
-                        <input id="name" name="name" type="text" autoComplete="name" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Bedrift As" value={signupData.name} onChange={handleChange} />
-                    </div>
-                    {commonFields}
-                </>
-            );
-        } else if (signupData.userType === 'LargeHousehold') {
-            return (
-                <>
-                    <div>
-                        <label htmlFor="householdName" className="field-label">Husstand Navn</label>
-                        <input id="householdName" name="householdName" type="text" autoComplete="organization" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Storholsholdning navn" value={signupData.name} onChange={handleChange} />
-                    </div>
-                    {commonFields}
-                </>
-            );
-        }
-    
-        return null;
-    };
+            </>
+        );
+    } else if (signupData.userType === 'LargeHousehold') {
+        return (
+            <>
+<div className="relative mb-6" data-twe-input-wrapper-init>
+<label class="text-sm mb-2 block">Storhusholdning Navn</label>
+    <input
+        id="name"
+        name="name"
+        type="text"
+        autoComplete="organization"
+        required
+        className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500"
+        placeholder="Storholsholdning navn"
+        value={signupData.name}
+        onChange={handleChange}
+    />
+</div>
+
+                {commonFields}
+            </>
+        );
+    }
+
+    return null;
+};
     
 
     return (
@@ -131,16 +215,16 @@ const Signup = () => {
                         <div className="space-y-2">
                             <span className="text-gray-700">Velg en bruker type:</span>
                             <div className="flex justify-center space-x-4">
-                                {['PrivateUser', 'Manufacturer', 'LargeHousehold'].map((type) => (
+                            {Object.entries(userTypeDisplayMapping).map(([value, label]) => (
                                     <button
-                                        key={type}
+                                        key={value}
                                         type="button"
-                                        onClick={() => setSignupData({ ...signupData, userType: type })}
+                                        onClick={() => setSignupData({ ...signupData, userType: value })}
                                         className={`px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors ${
-                                            signupData.userType === type ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'
+                                            signupData.userType === value ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'
                                         }`}
                                     >
-                                        {type}
+                                        {label}
                                     </button>
                                 ))}
                             </div>
