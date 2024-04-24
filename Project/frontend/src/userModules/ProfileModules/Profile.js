@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavbarHomeAuth from '../HomeModulesAuth/Navbar/NavbarHomeAuth';
-import { API_BASE_URL, AUTH_CURRENT_USER_URL } from '../../credentials';
+import { API_BASE_URL, AUTH_CURRENT_USER_URL, AUTH_UPDATE_USER_URL } from '../../credentials';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -69,13 +69,14 @@ const Profile = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5176/auth/updateUser', {
+            const url = `${API_BASE_URL}${AUTH_UPDATE_USER_URL}`;
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify(profileData) // Send the profile data as-is
+                body: JSON.stringify(profileData)
             });
 
             const data = await response.json();
