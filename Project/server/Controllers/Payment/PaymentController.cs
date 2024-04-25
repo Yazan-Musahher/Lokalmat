@@ -66,7 +66,7 @@ public class PaymentController : Controller
                 }).ToList(),
                 Mode = "payment",
                 SuccessUrl = domain + "/order-success/?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = domain + "/order-failure",
+                CancelUrl = domain + "/HomeAuth",
                 ClientReferenceId = request.UserId // Set ClientReferenceId to userId
             };
 

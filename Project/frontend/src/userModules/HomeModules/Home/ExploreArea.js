@@ -1,144 +1,168 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Element } from 'react-scroll';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../../contexts/CartContext';
 import NytNorge from '../../../Assets/Produsenter/NytNorge.png';
 import Bama from '../../../Assets/Produsenter/Bama.png';
 import Debio from '../../../Assets/Produsenter/Debio.png';
 import Norvegia from '../../../Assets/Produsenter/Norvegia.png';
-import map02 from '../../../Assets/Produsenter/map02.png';
-
-
-
-
-// Filter for sted,pris etc.
-const Filters = () => {
-  return (
-    <div className="my-6">
-      <div className="flex flex-col space-y-2">
-        <button className="text-sm border border-gray-300 rounded-full py-2.5 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 w-50 flex justify-between items-center">
-          <span className="flex-grow text-left pl-4">Sted</span>
-          <span className="pr-4">
-            <svg className="h-5 w-5 text-slate-600"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z"/>
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
-        </button>
-        <button className="text-sm border border-gray-300 rounded-full py-2.5 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 w-50 flex justify-between items-center">
-          <span className="flex-grow text-left pl-4">Pris</span>
-          <span className="pr-4">
-            <svg className="h-5 w-5 text-slate-600"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z"/>
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
-        </button>
-        <button className="text-sm border border-gray-300 rounded-full py-2.5 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 w-50 flex justify-between items-center">
-          <span className="flex-grow text-left pl-4">Popularitet</span>
-          <span className="pr-4">
-            <svg className="h-5 w-5 text-slate-600"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z"/>
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
-        </button>
-        <button className="text-sm border border-gray-300 rounded-full py-2.5 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 w-50 flex justify-between items-center">
-          <span className="flex-grow text-left pl-4">Rangering</span>
-          <span className="pr-4">
-            <svg className="h-5 w-5 text-slate-600"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z"/>
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
-        </button>
-      </div>
-    </div>
-  );
-};
-
-
+import { API_BASE_URL, PRODUCT_BASE_URL, PRODUCT_CITY_URL } from '../../../credentials';
 
 const ExploreArea = () => {
-  // State to keep track of input value
-  const [inputValue, setInputValue] = useState('');
+  const [cities, setCities] = useState([]);
+  const [selectedCities, setSelectedCities] = useState(new Set());
+  const [products, setProducts] = useState([]);
+  const [priceFrom, setPriceFrom] = useState('');
+  const [priceTo, setPriceTo] = useState('');
+  const navigate = useNavigate();
 
-  // Update state based on input change
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+
+  useEffect(() => {
+    // Fetch cities using the API_BASE_URL and PRODUCT_CITY_URL constants
+    const citiesUrl = `${API_BASE_URL}${PRODUCT_CITY_URL}`;
+    fetch(citiesUrl)
+      .then(response => response.json())
+      .then(data => {
+        setCities(data.map(city => ({ name: city, count: Math.floor(Math.random() * 1000) })));
+      })
+      .catch(error => {
+        console.error('Error fetching cities:', error);
+      });
+    // Fetch all products by default
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = (citiesQuery = '', minPrice = '', maxPrice = '') => {
+    let url = `${API_BASE_URL}${PRODUCT_BASE_URL}?`;
+    const params = new URLSearchParams();
+
+    if (citiesQuery) {
+      params.append('city', citiesQuery);
+    }
+    if (minPrice) {
+      params.append('minPrice', minPrice);
+    }
+    if (maxPrice) {
+      params.append('maxPrice', maxPrice);
+    }
+
+    url += params.toString();
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setProducts(data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
   };
 
-  // Clear the input and hide the cancel button
-  const handleCancel = () => {
-    setInputValue('');
+  const handleCheckboxChange = (cityName) => {
+    setSelectedCities((prevSelectedCities) => {
+      const updatedSelectedCities = new Set(prevSelectedCities);
+      if (updatedSelectedCities.has(cityName)) {
+        updatedSelectedCities.delete(cityName);
+      } else {
+        updatedSelectedCities.add(cityName);
+      }
+      const citiesQuery = Array.from(updatedSelectedCities).join(',');
+      fetchProducts(citiesQuery, priceFrom, priceTo);
+      return updatedSelectedCities;
+    });
+  };
+
+  const handleSearch = () => {
+    const citiesQuery = Array.from(selectedCities).join(',');
+    fetchProducts(citiesQuery, priceFrom, priceTo);
   };
 
   return (
-    <>
-     <Element id="products" className="pt-19">
-      <div className="flex items-center justify-center min-h-64">
-        <h1 className="text-5xl font-bold text-gray-800 leading-none">
-          VÅRE SAMARBEIDSPARTNERE
-        </h1>
-      </div>
-      <div className="flex items-center justify-center overflow-x-auto py-8">
-        <img src={NytNorge} alt="Nyt Norge" className="mx-4" style={{ width: '100px', height: '100px' }} />
-        <img src={Bama} alt="Bama" className="mx-4" style={{ width: '100px', height: '100px' }} />
-        <img src={Debio} alt="Debio" className="mx-4" style={{ width: '100px', height: '100px' }} />
-        <img src={Norvegia} alt="Norvegia" className="mx-4" style={{ width: '100px', height: '100px' }} />
-      </div>
-      <div className="flex justify-center items-start flex-wrap md:flex-nowrap mb-10">
-        <div className="max-w-lg p-8">
-          <p className="text-3xl font-bold text-gray-700 mb-8">
-            Utforsk ditt nærområde
-          </p>
-          <p className="text-lg text-gray-600 mb-6">
-            Legg til filter for mer presise søk, og utforsk hva ditt lokale næringsliv har å tilby.
-          </p>
-          <Filters />
-           {/* Search bar  */}
-          <div className="mt-4 flex items-center space-x-2">
-            <div className="bg-white border border-gray-300 rounded-full flex items-center px-4 py-2">
-              <input
-                className="bg-transparent flex-grow outline-none"
+    <Element id="products" className="pt-19">
+      <div className="container mx-auto flex flex-col lg:flex-row">
+        <div className="lg:w-1/4 bg-white p-5 mb-5 lg:mb-0">
+          <h2 className="text-xl font-semibold mb-4 mt-4 ml-8">Område</h2>
+          <ul className="text-gray-700">
+            {cities.map((city, index) => (
+              <li key={index} className="flex justify-between items-center p-2 hover:bg-gray-100 cursor-pointer">
+                <label className="flex items-center space-x-3">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedCities.has(city.name)}
+                    onChange={() => handleCheckboxChange(city.name)}
+                    className="form-checkbox h-5 w-5 text-blue-600"
+                  />
+                  <span className="text-sm font-medium text-gray-700">{city.name}</span>
+                </label>
+                <span className="text-sm font-medium text-gray-500">{`(${city.count})`}</span>
+              </li>
+            ))}
+          </ul>
+          {/* Price filter */}
+          <div className="my-4 ml-8">
+            <h2 className="text-xl font-semibold mb-3">Pris</h2>
+            <div className="flex items-center gap-2">
+              <input 
                 type="text"
-                placeholder="Søk etter produkter"
-                value={inputValue}
-                onChange={handleInputChange}
+                placeholder=" Fra kr"
+                value={priceFrom}
+                onChange={(e) => setPriceFrom(e.target.value)}
+                className="border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-gray-700 text-sm w-20 h-10"
               />
-              <button className="text-gray-500 focus:outline-none">
+              <input 
+                type="text"
+                placeholder=" Til kr"
+                value={priceTo}
+                onChange={(e) => setPriceTo(e.target.value)}
+                className="border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-gray-700 text-sm w-20 h-10"
+              />
+              <button 
+                onClick={handleSearch}
+                className="bg-green-700 text-white text-sm h-8 px-3 transition duration-150 ease-in-out transform hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              >
+                Søk
               </button>
-              {inputValue && (
-                <button onClick={handleCancel} className="text-red-500 focus:outline-none">
-                  ×
-                </button>
-              )}
             </div>
-            {inputValue && (
-              <div onClick={handleCancel} className="text-red-500 ml-4 cursor-pointer">
-                Avbryt
-              </div>
-            )}
           </div>
-            {/* Product Stats and Search Button */}
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold">1900</div>
-              <div className="text-sm text-gray-600">Totale produkter</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold">500</div>
-              <div className="text-sm text-gray-600">Tilgjenglige i ditt nærområde</div>
-            </div>
-            <button className="bg-green-700 text-white rounded-full px-8 py-2">
-              Søk
+        </div>
+{/* Products display */}
+<div className="flex-grow p-5">
+  {/* Responsive grid for products */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {products.map((product) => (
+      <div key={product.id} className="border p-4 flex flex-col">
+        <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover mb-2" />
+        <h3 className="text-lg font-semibold my-2">{product.name}</h3>
+        <p className="text-gray-600 mb-1">{`${product.price} kr`}</p>
+        <p className="text-sm text-gray-500 mb-2">{product.description}</p>
+        <p className="text-sm text-green-700 mb-2">Dette produktet selges av <span className="font-bold">{product.manufacturerName}</span></p>
+        {/* Add to cart button */}
+        <button
+              onClick={() => navigate('/login')}
+              className="mt-auto bg-gray-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              + Legg til handlekurv
             </button>
-          </div>
-        </div>
-        <div className="ml-20">
-          <img src={map02} alt="map02" style={{ width: '500px', height: '500px' }} />
-        </div>
       </div>
-      </Element>
-    </>
+    ))}
+  </div>
+</div>
+
+      </div>
+      <div className="mt-8">
+  <div className="flex items-center justify-center">
+    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 leading-none text-center">
+      VÅRE SAMARBEIDSPARTNERE
+    </h1>
+  </div>
+  <div className="flex items-center justify-center overflow-x-auto py-8">
+    <img src={NytNorge} alt="Nyt Norge" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+    <img src={Bama} alt="Bama" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+    <img src={Debio} alt="Debio" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+    <img src={Norvegia} alt="Norvegia" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+  </div>
+</div>
+    </Element>
   );
 };
 

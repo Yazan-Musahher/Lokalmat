@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
+import { AiFillFacebook, AiFillGoogleCircle, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import Navbar from './navbar';
 import {API_BASE_URL, AUTH_LOGIN_URL} from '../credentials';
 const Login = () => {
@@ -9,6 +9,7 @@ const Login = () => {
     const { login } = useAuth();
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [loginError, setLoginError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem('token')) {
@@ -23,6 +24,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         const loginUrl = `${API_BASE_URL}${AUTH_LOGIN_URL}`;
         console.log("REQUEST: ", loginUrl)
         try {
@@ -43,11 +45,13 @@ const Login = () => {
                 const redirectTo = data.role === 'PrivateUser' ? '/HomeAuth' : '/produsent';
                 navigate(redirectTo, { replace: true });
             } else {
-                setLoginError('Login failed. Please check your credentials.');
+                setLoginError('Innlogging feilet. Vennligst sjekk Epost eller Passord');
+                setIsLoading(false); // Reset loading state on error
             }
         } catch (error) {
             console.error('An error occurred:', error);
             setLoginError('An error occurred during login. Please try again.');
+            setIsLoading(false); // Reset loading state on error
         }
         
     };
@@ -67,7 +71,7 @@ const Login = () => {
                                 name="email"
                                 type="email" 
                                 required 
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                                className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500" 
                                 placeholder="Epost" 
                                 value={loginData.email}
                                 onChange={handleChange}
@@ -80,16 +84,20 @@ const Login = () => {
                                 name="password"
                                 type="password" 
                                 required 
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                                className="w-full text-sm px-4 py-3.5 rounded-md outline-none border-2  focus:border-green-500" 
                                 placeholder="Passord" 
                                 value={loginData.password}
                                 onChange={handleChange}
                             />
                         </div>
                         <div>
-                            <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md  text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Log inn
-                            </button>
+                        <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled={isLoading}>
+                        {isLoading ? (
+                            <AiOutlineLoading3Quarters className="animate-spin h-5 w-5 mr-3" />
+                        ) : (
+                            'Log inn'
+                        )}
+                    </button>
                         </div>
                     </form>
                     <div className="mt-6 flex justify-center">
@@ -99,6 +107,13 @@ const Login = () => {
                             </a>
                         </div>
                     </div>
+                    <div className="mt-6 flex justify-center">
+                    <div className="text-sm">
+                            <a href="/signup/" className="font-medium text-indigo-600 hover:text-indigo-500">
+                                Har du ikke konto fra før? Opprett en konto!
+                            </a>
+                        </div>
+                        </div>
                     <div className="mt-6">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
