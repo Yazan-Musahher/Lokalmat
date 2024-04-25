@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FaBars, FaTimes } from 'react-icons/fa';  // Importing icons
+import { FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
   const location = useLocation();
