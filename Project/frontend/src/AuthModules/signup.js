@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai';
+import { AiFillFacebook, AiFillGoogleCircle, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import Navbar from './navbar';
 import { API_BASE_URL, AUTH_SIGNUP_URL } from '../credentials';
 
@@ -19,6 +19,7 @@ const Signup = () => {
 
     const [signupSuccess, setSignupSuccess] = useState('');
     const [signupError, setSignupError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,6 +31,7 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         const signupUrl = `${API_BASE_URL}${AUTH_SIGNUP_URL}`;
         try {
             const response = await fetch(signupUrl, {
@@ -45,13 +47,19 @@ const Signup = () => {
                 setTimeout(() => navigate('/login/'), 3000);
             } else {
                 const resJson = await response.json();
-                setSignupError(resJson.message || 'Signup failed');
+                let errorMessage = resJson.message || 'Passordet må inneholde minst ett ikke-alfanumerisk tegn.';
+                errorMessage += '\nPassordet må inneholde minst én stor bokstav (A-Z).'; // Add second message on a new line
+                setSignupError(errorMessage);
+                setIsLoading(false); // Reset loading state on error
             }
         } catch (error) {
             console.error('An error occurred:', error);
             setSignupError('An error occurred during signup. Please try again.');
+            setIsLoading(false); // Reset loading state on error
         }
     };
+    
+    
 
     const userTypeDisplayMapping = {
         'PrivateUser': 'Privat',
@@ -233,7 +241,11 @@ const renderUserTypeSpecificFields = () => {
                         </div>
                         {renderUserTypeSpecificFields()}
                         <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Opprett konto
+                        {isLoading ? (
+                            <AiOutlineLoading3Quarters className="animate-spin h-5 w-5 mr-3" />
+                        ) : (
+                            'Oprett konto'
+                        )}
                         </button>
                     </form>
                     <div className="mt-6">
