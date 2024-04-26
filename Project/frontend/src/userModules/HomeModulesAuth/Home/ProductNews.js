@@ -11,12 +11,12 @@ const ProductNews = () => {
   const categories = ['Alle', 'Ukens produsent', 'Vi anbefaler', 'Produsentens tips', 'Lokalt'];
 
   const newsItems = [
-    { id: 1, title: 'sjekk ut dette 1', imageUrl: jordbar },
-    { id: 2, title: 'sjekk ut dette 2', imageUrl: bananaImage },
-    { id: 3, title: 'sjekk ut dette 3', imageUrl: vitality },
-    { id: 4, title: 'sjekk ut dette 4', imageUrl: Vitality2 },
-    { id: 5, title: 'sjekk ut dette 5', imageUrl: jordbar },
-    { id: 6, title: 'sjekk ut dette 6', imageUrl: varer },
+    { id: 1, title: 'Fersk Jorbær', imageUrl: jordbar },
+    { id: 2, title: 'Fersk Bananer', imageUrl: bananaImage },
+    { id: 3, title: 'Vitality shot', imageUrl: vitality },
+    { id: 4, title: 'gurkemeie og sitron', imageUrl: Vitality2 },
+    { id: 5, title: 'Fersk Jorbær', imageUrl: jordbar },
+    { id: 6, title: 'Nye varer fra NYT Norge ', imageUrl: varer },
   ];
 
   return (

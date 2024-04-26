@@ -10,9 +10,9 @@ const Footer = () => {
                 <div className="flex flex-col text-gray-700 mb-6 lg:mb-0">
                     <h2 className="text-5xl font-bold mb-3 text-green-700">Lokalmat</h2>
                     <p className="mb-4">
-                       Etiam rhoncus urna ac odio finibus,<br />
-                       et accumsan purus consequat.<br />
-                       Suspendisse ut lorem ac mi commodo mattis.
+                    plattform for kjøp, salg og formidling,<br />
+                    for tilbydere av lokalt produserte varer.<br />
+                    med et enkelt og oversiktlig brukergrensesnitt.
                     </p>
                     <div className="flex">
                         <a href="#" className="text-orange-500 text-2xl mr-6"><FaFacebook /></a>

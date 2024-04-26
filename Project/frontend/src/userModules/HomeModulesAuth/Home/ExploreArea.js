@@ -32,7 +32,12 @@
     }, []);
 
     const fetchProducts = (citiesQuery = '', minPrice = '', maxPrice = '') => {
-      let url = `${API_BASE_URL}${PRODUCT_BASE_URL}/price?`;
+      let baseURL = `${API_BASE_URL}${PRODUCT_BASE_URL}`;
+  
+      if (minPrice || maxPrice) {
+          baseURL += '/price';
+      }
+  
       const params = new URLSearchParams();
   
       if (citiesQuery) {
@@ -45,7 +50,7 @@
           params.append('maxPrice', maxPrice);
       }
   
-      url += params.toString();
+      const url = `${baseURL}?${params.toString()}`;
   
       fetch(url)
           .then(response => response.json())
@@ -150,19 +155,24 @@
   </div>
 
         </div>
+
         <div className="mt-8">
-    <div className="flex items-center justify-center">
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 leading-none text-center">
-        VÅRE SAMARBEIDSPARTNERE
-      </h1>
-    </div>
-    <div className="flex items-center justify-center overflow-x-auto py-8">
-      <img src={NytNorge} alt="Nyt Norge" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
-      <img src={Bama} alt="Bama" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
-      <img src={Debio} alt="Debio" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
-      <img src={Norvegia} alt="Norvegia" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+  <div className="flex items-center justify-center">
+    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 leading-none text-center">
+      VÅRE SAMARBEIDSPARTNERE
+    </h1>
+  </div>
+  <div className="flex justify-center mt-8">
+    <div className="flex justify-between max-w-4xl mx-auto space-x-14">
+      <img src={NytNorge} alt="Nyt Norge" className="h-24 w-24 sm:h-28 sm:w-28" />
+      <img src={Bama} alt="Bama" className="h-24 w-24 sm:h-28 sm:w-28" />
+      <img src={Debio} alt="Debio" className="h-24 w-24 sm:h-28 sm:w-28" />
+      <img src={Norvegia} alt="Norvegia" className="h-24 w-24 sm:h-28 sm:w-28" />
     </div>
   </div>
+</div>
+
+
       </Element>
     );
   };

@@ -33,30 +33,35 @@ const ExploreArea = () => {
   }, []);
 
   const fetchProducts = (citiesQuery = '', minPrice = '', maxPrice = '') => {
-    let url = `${API_BASE_URL}${PRODUCT_BASE_URL}?`;
+    let baseURL = `${API_BASE_URL}${PRODUCT_BASE_URL}`;
+
+    if (minPrice || maxPrice) {
+        baseURL += '/price';
+    }
+
     const params = new URLSearchParams();
 
     if (citiesQuery) {
-      params.append('city', citiesQuery);
+        params.append('city', citiesQuery);
     }
     if (minPrice) {
-      params.append('minPrice', minPrice);
+        params.append('minPrice', minPrice);
     }
     if (maxPrice) {
-      params.append('maxPrice', maxPrice);
+        params.append('maxPrice', maxPrice);
     }
 
-    url += params.toString();
+    const url = `${baseURL}?${params.toString()}`;
 
     fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        setProducts(data);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
-  };
+        .then(response => response.json())
+        .then(data => {
+            setProducts(data);
+        })
+        .catch(error => {
+            console.error('Error fetching products:', error);
+        });
+};
 
   const handleCheckboxChange = (cityName) => {
     setSelectedCities((prevSelectedCities) => {
@@ -155,11 +160,13 @@ const ExploreArea = () => {
       VÅRE SAMARBEIDSPARTNERE
     </h1>
   </div>
-  <div className="flex items-center justify-center overflow-x-auto py-8">
-    <img src={NytNorge} alt="Nyt Norge" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
-    <img src={Bama} alt="Bama" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
-    <img src={Debio} alt="Debio" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
-    <img src={Norvegia} alt="Norvegia" className="mx-2 h-24 w-24 sm:mx-4 sm:h-28 sm:w-28" />
+  <div className="flex justify-center mt-8">
+    <div className="flex justify-between max-w-4xl mx-auto space-x-14">
+      <img src={NytNorge} alt="Nyt Norge" className="h-24 w-24 sm:h-28 sm:w-28" />
+      <img src={Bama} alt="Bama" className="h-24 w-24 sm:h-28 sm:w-28" />
+      <img src={Debio} alt="Debio" className="h-24 w-24 sm:h-28 sm:w-28" />
+      <img src={Norvegia} alt="Norvegia" className="h-24 w-24 sm:h-28 sm:w-28" />
+    </div>
   </div>
 </div>
     </Element>

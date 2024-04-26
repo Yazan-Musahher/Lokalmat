@@ -12,7 +12,6 @@ const Home = () => {
             <NavbarHome />
             <Header />
             <ExploreArea />
-            <LocalProducers/>
             <ProductNews/>
             <Footer/>
         </>

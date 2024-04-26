@@ -50,9 +50,10 @@ public class ProductController : ControllerBase
         }
 
         if (!string.IsNullOrEmpty(city))
-        {
-            query = query.Where(p => p.City == city);
-        }
+       {
+        var cities = city.Split(',').Select(c => c.Trim()).ToList();
+        query = query.Where(p => cities.Contains(p.City));
+       }
 
         if (maxPrice.HasValue)
         {
