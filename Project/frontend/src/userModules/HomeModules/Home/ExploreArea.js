@@ -31,30 +31,40 @@ const ExploreArea = () => {
   }, []);
 
   const fetchProducts = (citiesQuery = '', minPrice = '', maxPrice = '') => {
-    let url = `http://localhost:5176/api/Product?`;
+    let baseURL = `http://localhost:5176/api/Product`;
+
+    if (minPrice || maxPrice) {
+        baseURL += '/price';
+    }
+
     const params = new URLSearchParams();
 
+    // Instead of appending each city as a separate entry,
+    // we combine them into one string, separated by commas
     if (citiesQuery) {
-      params.append('city', citiesQuery);
+        params.append('city', citiesQuery);
     }
     if (minPrice) {
-      params.append('minPrice', minPrice);
+        params.append('minPrice', minPrice);
     }
     if (maxPrice) {
-      params.append('maxPrice', maxPrice);
+        params.append('maxPrice', maxPrice);
     }
 
-    url += params.toString();
+    const url = `${baseURL}?${params.toString()}`;
 
     fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        setProducts(data);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
-  };
+        .then(response => response.json())
+        .then(data => {
+            setProducts(data);
+        })
+        .catch(error => {
+            console.error('Error fetching products:', error);
+        });
+};
+
+
+
 
   const handleCheckboxChange = (cityName) => {
     setSelectedCities((prevSelectedCities) => {
